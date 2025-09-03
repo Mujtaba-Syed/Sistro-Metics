@@ -41,10 +41,12 @@ class CartView(View): #done
     def get(self,request):  
         return render(request,'shoping-cart.html')
     
-class CheckoutView(View):
-    def get(self,request):
-        return render(request,'shoping-checkout.html')
     
 class ProductView(View): #done
     def get(self,request):
         return render(request,'product.html')
+
+class CheckoutView(View):
+    def get(self,request):
+        return render(request,'checkout.html')
+    

@@ -1,0 +1,20 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+env/
+
+# Django stuff
+*.log
+db.sqlite3
+media/
+
+
+# Mac / Windows system files
+.DS_Store
+Thumbs.db
+
+
