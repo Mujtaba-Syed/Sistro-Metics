@@ -3337,3 +3337,7 @@ input.num-product::-webkit-inner-spin-button {
   margin-top: 4.5rem;
   
 }
+.body-bg{
+  background-color: #FAF7F3; 
+  margin-top: -6px;
+}
