@@ -30,43 +30,43 @@
     </div>
 
     <div class="wrap-menu-desktop">
-        <nav class="limiter-menu-desktop" style="background-color: rgb(243 243 243)">
+        <nav class="limiter-menu-desktop" style="background-color: #e83e8c">
             
             <!-- Logo desktop -->		
             <a href="#" class="logo">
-                <img src="{% static 'images/icons/ecom.png' %}" alt="IMG-LOGO">
+                <h1 style="color: #ffffff; font-family: 'Montserrat-Bold', 'Montserrat', sans-serif; font-weight: bold;">Sistomatic</h1>                <!-- <img src="{% static 'images/icons/ecom.png' %}" alt="IMG-LOGO"> -->
             </a>
 
             <!-- Menu desktop -->
             <div class="menu-desktop">
-                <ul class="main-menu">
-                    <li class="active-menu">
-                        <a href="{% url 'home' %}">Home</a>
-                        <ul class="sub-menu">
-                            <li><a href="{% url 'home' %}">Homepage 1</a></li>
-                            <li><a href="{% url 'home-02' %}">Homepage 2</a></li>
-                            <li><a href="{% url 'home-03' %}">Homepage 3</a></li>
+                <ul class="main-menu" style="display: flex; gap: 8px; padding: 8px; border-radius: 25px; backdrop-filter: blur(10px);">
+                    <li class="active-menu" style="background: rgb(255, 255, 255); border-radius: 20px; padding: 8px 16px; transition: all 0.3s ease;">
+                        <a href="{% url 'home' %}" style="color: #e83e8c; text-decoration: none; font-weight: 500;">Home</a>
+                        <ul class="sub-menu" style="background: rgba(0,0,0,0.8); border-radius: 15px; padding: 10px; margin-top: 8px; min-width: 150px;">
+                            <li style="padding: 5px 0;"><a href="{% url 'home' %}" style="color: white; text-decoration: none; padding: 5px 10px; border-radius: 8px; display: block; transition: background 0.3s ease;">Homepage 1</a></li>
+                            <li style="padding: 5px 0;"><a href="{% url 'home-02' %}" style="color: white; text-decoration: none; padding: 5px 10px; border-radius: 8px; display: block; transition: background 0.3s ease;">Homepage 2</a></li>
+                            <li style="padding: 5px 0;"><a href="{% url 'home-03' %}" style="color: white; text-decoration: none; padding: 5px 10px; border-radius: 8px; display: block; transition: background 0.3s ease;">Homepage 3</a></li>
                         </ul>
                     </li>
 
-                    <li>
-                        <a href="{% url 'product' %}">Shop</a>
+                    <li style="background: rgb(255, 255, 255); border-radius: 20px; padding: 8px 16px; transition: all 0.3s ease;">
+                        <a href="{% url 'product' %}" style="color: black; text-decoration: none; font-weight: 500;" onmouseover="this.style.color='#e83e8c'" onmouseout="this.style.color='black'">Shop</a>
                     </li>
 
-                    <li class="label1" data-label1="hot">
-                        <a href="{% url 'cart' %}">Features</a>
+                    <li class="label1" data-label1="hot" style="background: rgb(255, 255, 255); border-radius: 20px; padding: 8px 16px; transition: all 0.3s ease; position: relative;">
+                        <a href="{% url 'cart' %}" style="color: black; text-decoration: none; font-weight: 500;" onmouseover="this.style.color='#e83e8c'" onmouseout="this.style.color='black'">Features</a>
                     </li>
 
-                    <li>
-                        <a href="{% url 'blog' %}">Blog</a>
+                    <li style="background: rgb(255, 255, 255); border-radius: 20px; padding: 8px 16px; transition: all 0.3s ease;">
+                        <a href="{% url 'blog' %}" style="color: black; text-decoration: none; font-weight: 500;" onmouseover="this.style.color='#e83e8c'" onmouseout="this.style.color='black'">Blog</a>
                     </li>
 
-                    <li>
-                        <a href="{% url 'about' %}">About</a>
+                    <li style="background: rgb(255, 255, 255); border-radius: 20px; padding: 8px 16px; transition: all 0.3s ease;">
+                        <a href="{% url 'about' %}" style="color: black; text-decoration: none; font-weight: 500;" onmouseover="this.style.color='#e83e8c'" onmouseout="this.style.color='black'">About</a>
                     </li>
 
-                    <li>
-                        <a href="{% url 'contact' %}">Contact</a>
+                    <li style="background: rgb(255, 255, 255); border-radius: 20px; padding: 8px 16px; transition: all 0.3s ease;">
+                        <a href="{% url 'contact' %}" style="color: black; text-decoration: none; font-weight: 500;" onmouseover="this.style.color='#e83e8c'" onmouseout="this.style.color='black'">Contact</a>
                     </li>
                 </ul>
             </div>	
@@ -150,37 +150,37 @@
         </li>
     </ul>
 
-    <ul class="main-menu-m">
-        <li>
-            <a href="{% url 'home' %}">Home</a>
-            <ul class="sub-menu-m">
-                    <li><a href="{% url 'home' %}">Homepage 1</a></li>
-                <li><a href="{% url 'home-02' %}">Homepage 2</a></li>
-                <li><a href="{% url 'home-03' %}">Homepage 3</a></li>
+    <ul class="main-menu-m" >
+        <li style="background: rgba(255,255,255,0.2); border-radius: 15px; padding: 12px 16px; margin: 5px 0; transition: all 0.3s ease;">
+            <a href="{% url 'home' %}" style="color: #e83e8c; text-decoration: none; font-weight: 500; display: flex; justify-content: space-between; align-items: center;">Home</a>
+            <ul class="sub-menu-m" style=" border-radius: 10px; padding: 8px; margin-top: 8px;">
+                    <li style="padding: 5px 0;"><a href="{% url 'home' %}" style="color: white; text-decoration: none; padding: 8px 12px; border-radius: 8px; display: block; transition: background 0.3s ease;">Homepage 1</a></li>
+                <li style="padding: 5px 0;"><a href="{% url 'home-02' %}" style="color: white; text-decoration: none; padding: 8px 12px; border-radius: 8px; display: block; transition: background 0.3s ease;">Homepage 2</a></li>
+                <li style="padding: 5px 0;"><a href="{% url 'home-03' %}" style="color: white; text-decoration: none; padding: 8px 12px; border-radius: 8px; display: block; transition: background 0.3s ease;">Homepage 3</a></li>
             </ul>
-            <span class="arrow-main-menu-m">
+            <span class="arrow-main-menu-m" style="color: white;">
                 <i class="fa fa-angle-right" aria-hidden="true"></i>
             </span>
         </li>
 
-        <li>
-            <a href="{% url 'product' %}">Shop</a>
+        <li style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 12px 16px; margin: 5px 0; transition: all 0.3s ease;">
+            <a href="{% url 'product' %}" style="color: white; text-decoration: none; font-weight: 500;" onmouseover="this.style.color='#e83e8c'" onmouseout="this.style.color='white'">Shop</a>
         </li>
 
-        <li>
-            <a href="{% url 'cart' %}" class="label1 rs1" data-label1="hot">Features</a>
+        <li style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 12px 16px; margin: 5px 0; transition: all 0.3s ease; position: relative;">
+            <a href="{% url 'cart' %}" class="label1 rs1" data-label1="hot" style="color: white; text-decoration: none; font-weight: 500;" onmouseover="this.style.color='#e83e8c'" onmouseout="this.style.color='white'">Features</a>
         </li>
 
-        <li>
-                        <a href="{% url 'blog' %}">Blog</a>
+        <li style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 12px 16px; margin: 5px 0; transition: all 0.3s ease;">
+                        <a href="{% url 'blog' %}" style="color: white; text-decoration: none; font-weight: 500;" onmouseover="this.style.color='#e83e8c'" onmouseout="this.style.color='white'">Blog</a>
         </li>
 
-        <li>
-            <a href="{% url 'about' %}">About</a>
+        <li style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 12px 16px; margin: 5px 0; transition: all 0.3s ease;">
+            <a href="{% url 'about' %}" style="color: white; text-decoration: none; font-weight: 500;" onmouseover="this.style.color='#e83e8c'" onmouseout="this.style.color='white'">About</a>
         </li>
 
-        <li>
-            <a href="{% url 'contact' %}">Contact</a>
+        <li style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 12px 16px; margin: 5px 0; transition: all 0.3s ease;">
+            <a href="{% url 'contact' %}" style="color: white; text-decoration: none; font-weight: 500;" onmouseover="this.style.color='#e83e8c'" onmouseout="this.style.color='white'">Contact</a>
         </li>
     </ul>
 </div>

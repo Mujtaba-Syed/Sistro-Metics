@@ -2642,7 +2642,7 @@ input.num-product::-webkit-inner-spin-button {
 ==================================================================*/
 .bg-none {background-color: transparent;}
 .bg0 {background-color: #fff;}
-.bg1 {background-color: #717fe0;}
+.bg1 {background-color: #e83e8c;}
 .bg2 {background-color: #e6e6e6;}
 .bg3 {background-color: #222;}
 .bg5 {background-color: rgba(0,0,0,0.5);}
@@ -2813,7 +2813,7 @@ input.num-product::-webkit-inner-spin-button {
   font-family: Poppins-Regular;
   font-size: 10px;
   line-height: 15px;
-  color: #fff;
+  color: #000000;
   text-transform: uppercase;
   text-align: center;
 
@@ -2825,7 +2825,7 @@ input.num-product::-webkit-inner-spin-button {
   min-width: 32px;
   border-radius: 7px;
   padding: 0 4px;
-  background-color: #f74877;
+  background-color: #ffc7d5;
 }
 
 .label1.rs1::after {
