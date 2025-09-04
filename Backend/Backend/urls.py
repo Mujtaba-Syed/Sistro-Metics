@@ -20,4 +20,10 @@ from django.urls import path,include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include('FEcore.urls')),
+    path('order/',include('Order.urls')),
+    path('user-auth/',include('UserAuth.urls')),
+    path('cart/',include('Cart.urls')),
+    path('blog/',include('Blog.urls')),
+    path('product/',include('Product.urls')),
+    path('review/',include('Review.urls')),
 ]

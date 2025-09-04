@@ -38,6 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'FEcore',
+    'Order',
+    'UserAuth',
+    'Cart',
+    'Blog',
+    'Product',
+    'Review',
 ]
 
 MIDDLEWARE = [
