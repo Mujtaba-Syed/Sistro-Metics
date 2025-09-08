@@ -321,6 +321,12 @@ function populateProductGallery(product) {
                 mainImage.alt = image.alt_text || product.name;
                 mainImage.setAttribute('data-zoom-image', `${API_BASE_URL}${image.image}`);
                 
+                // Update zoom image to match the new main image
+                const zoomImage = document.getElementById('zoom-image');
+                if (zoomImage) {
+                    zoomImage.src = `${API_BASE_URL}${image.image}`;
+                }
+                
                 // Reinitialize Elevate Zoom with new image
                 if (typeof $.fn.elevateZoom !== 'undefined') {
                     if (mainImage.data('elevateZoom')) {
@@ -340,7 +346,7 @@ function populateProductGallery(product) {
                         tint: true,
                         tintColour: "#e83e8c",
                         tintOpacity: 0.1,
-                        zoomLevel: 2,
+                        zoomLevel: 1.3,
                         scrollZoom: true,
                         easing: true
                     });
@@ -477,8 +483,8 @@ function populateProductGallery(product) {
                 
                 // Update the zoom window to show the magnified portion
                 if (zoomWindow && zoomImage) {
-                    // Calculate the zoom level (2x magnification)
-                    const zoomLevel = 2;
+                    // Calculate the zoom level (1.05x magnification)
+                    const zoomLevel = 1.05;
                     
                     // Calculate the zoom image position to center the magnified area
                     // We need to move the zoom image so that the area under the magnifier is centered in the zoom window
