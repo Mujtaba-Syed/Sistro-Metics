@@ -1,10 +1,17 @@
 from django.shortcuts import render
 from django.views import View
+from django.conf import settings
+import os
 
 # Create your views here.
 class HomeView(View): #done
     def get(self,request):
-        return render(request,'index.html')
+        # Get API URL from environment or use default
+        api_url = os.environ.get('BASE_URL', 'http://127.0.0.1:8000')
+        context = {
+            'base_url': api_url
+        }
+        return render(request,'index.html', context)
 
 class Home2View(View): #done
     def get(self,request):
