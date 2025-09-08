@@ -69,6 +69,7 @@
 									<th class="column-3">Price</th>
 									<th class="column-4">Quantity</th>
 									<th class="column-5">Total</th>
+									<th class="column-6">Action</th>
 								</tr>
 
 								<tr class="table_row">
@@ -132,6 +133,10 @@
 
 							<div class="flex-c-m stext-101 cl2 size-119 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-10">
 								Update Cart
+							</div>
+							
+							<div class="flex-c-m stext-101 cl2 size-119 bg1 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-10 clear-cart-btn" style="margin-left: 10px;">
+								Clear Cart
 							</div>
 						</div>
 					</div>
@@ -270,7 +275,13 @@
 		});
 	</script>
 <!--===============================================================================================-->
-	<script src="{% static 'js/main.js' %}	"></script>
+	<script>
+		// Pass API URL and CSRF token from Django to JavaScript
+		window.BASE_URL = '{{ base_url }}';
+		window.CSRF_TOKEN = '{{ csrf_token }}';
+	</script>
+	<script src="{% static 'js/main.js' %}"></script>
+	<script src="{% static 'js/cart.js' %}"></script>
 
 </body>
 </html>

@@ -1,8 +1,7 @@
 // this is JS file for index.html
 
-// API Configuration - Get from Django template
-const API_BASE_URL = window.BASE_URL || 'http://127.0.0.1:8000';
-const PRODUCTS_API = `${API_BASE_URL}/product/products/`;
+// API Configuration - Get from Django template (using global from cart.js)
+const PRODUCTS_API = `${window.API_BASE_URL}/product/products/`;
 
 // DOM Elements
 const productGrid = document.querySelector('.isotope-grid');
@@ -25,7 +24,7 @@ async function fetchProducts() {
 // Fetch individual product details for quick view
 async function fetchProductDetail(productId) {
     try {
-        const response = await fetch(`${API_BASE_URL}/product/products/${productId}/`);
+        const response = await fetch(`${window.API_BASE_URL}/product/products/${productId}/`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -47,7 +46,7 @@ function createProductCard(product) {
     const primaryImage = product.images && product.images.length > 0 
         ? product.images.find(img => img.order === 1) || product.images[0]
         : null;
-    const imageUrl = primaryImage ? `${API_BASE_URL}${primaryImage.image}` : `${API_BASE_URL}/static/images/product-01.jpg`;
+    const imageUrl = primaryImage ? `${window.API_BASE_URL}${primaryImage.image}` : `${window.API_BASE_URL}/static/images/product-01.jpg`;
     
     // Map categories to CSS classes for filtering
     const categoryClass = getCategoryClass(product.category.name);
@@ -57,7 +56,7 @@ function createProductCard(product) {
             <!-- Block2 -->
             <div class="block2" style="border: 2px solid #e83e8c; border-radius: 8px; padding: 8px; overflow: visible; display: flex; flex-direction: column; min-height: 400px; height: auto;">
                 <div class="block2-pic hov-img0" style="overflow: hidden; position: relative; cursor: zoom-in; flex-shrink: 0; height: 200px;">
-                    <img src="${imageUrl}" alt="${product.name}" onerror="this.src='${API_BASE_URL}/static/images/product-01.jpg'" style="transition: transform 0.3s ease; width: 100%; height: 100%; object-fit: cover; transform-origin: center;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+                    <img src="${imageUrl}" alt="${product.name}" onerror="this.src='${window.API_BASE_URL}/static/images/product-01.jpg'" style="transition: transform 0.3s ease; width: 100%; height: 100%; object-fit: cover; transform-origin: center;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
                     ${product.is_on_sale ? `<span class="block2-label-sale" style="position: absolute; top: 10px; left: 10px; z-index: 100; background: #e83e8c; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">-${discountPercentage}%</span>` : ''}
                     ${product.is_new ? '<span class="block2-label-new" style="position: absolute; top: 10px; right: 10px; z-index: 100; background: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">New</span>' : ''}
                     ${product.is_featured ? '<span class="block2-label-featured" style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 100; background: #ffc107; color: black; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">Featured</span>' : ''}
@@ -93,16 +92,19 @@ function createProductCard(product) {
 
                     <div class="block2-txt-child2 flex-r p-t-3">
                         <a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2" data-product-id="${product.id}">
-                            <img class="icon-heart1 dis-block trans-04" src="${API_BASE_URL}/static/images/icons/icon-heart-01.png" alt="ICON">
-                            <img class="icon-heart2 dis-block trans-04 ab-t-l" src="${API_BASE_URL}/static/images/icons/icon-heart-02.png" alt="ICON">
+                            <img class="icon-heart1 dis-block trans-04" src="${window.API_BASE_URL}/static/images/icons/icon-heart-01.png" alt="ICON">
+                            <img class="icon-heart2 dis-block trans-04 ab-t-l" src="${window.API_BASE_URL}/static/images/icons/icon-heart-02.png" alt="ICON">
                         </a>
                     </div>
                 </div>
                 
-                <div class="block2-btn-container" style="text-align: center; margin-top: auto; padding-top: 10px;">
+                <div class="block2-btn-container" style="text-align: center; margin-top: auto; padding-top: 10px; display: flex; gap: 8px; justify-content: center;">
                     <a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 js-show-modal1" data-product-id="${product.id}" style="background-color: #e83e8c; color: white; border: none; border-radius: 25px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; padding: 12px 24px; font-size: 12px; position:relative; top: 0px">
                         Quick View
                     </a>
+                    <button onclick="console.log('Add to cart clicked, addToCart available:', typeof addToCart); if(typeof addToCart === 'function') { addToCart(${product.id}); } else { console.error('addToCart function not available'); }" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2" style="background-color: #28a745; color: white; border: none; border-radius: 25px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; padding: 12px 24px; font-size: 12px; cursor: pointer;">
+                        Add to Cart
+                    </button>
                 </div>
             </div>
         </div>
@@ -247,10 +249,18 @@ function populateQuickViewModal(product) {
         `;
     }
 
-    // Update add to cart button with product ID
+    // Update add to cart button with product ID and click handler
     const addToCartBtn = document.querySelector('.js-addcart-detail');
     if (addToCartBtn) {
         addToCartBtn.setAttribute('data-product-id', product.id);
+        addToCartBtn.onclick = function() {
+            console.log('Quick view add to cart clicked, addToCart available:', typeof addToCart);
+            if (typeof addToCart === 'function') {
+                addToCart(product.id);
+            } else {
+                console.error('addToCart function not available. Make sure cart.js is loaded.');
+            }
+        };
     }
 
     // Update wishlist button with product ID
@@ -298,12 +308,12 @@ function populateProductGallery(product) {
             `;
             
             thumbnail.innerHTML = `
-                <img src="${API_BASE_URL}${image.image}" 
+                <img src="${window.API_BASE_URL}${image.image}" 
                      alt="${image.alt_text || product.name}" 
                      style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;"
                      onmouseover="this.style.transform='scale(1.1)'" 
                      onmouseout="this.style.transform='scale(1)'"
-                     data-zoom-image="${API_BASE_URL}${image.image}">
+                     data-zoom-image="${window.API_BASE_URL}${image.image}">
             `;
             
             // Add click event to switch main image
@@ -317,14 +327,14 @@ function populateProductGallery(product) {
                 thumbnail.style.borderColor = '#e83e8c';
                 
                 // Update main image
-                mainImage.src = `${API_BASE_URL}${image.image}`;
+                mainImage.src = `${window.API_BASE_URL}${image.image}`;
                 mainImage.alt = image.alt_text || product.name;
-                mainImage.setAttribute('data-zoom-image', `${API_BASE_URL}${image.image}`);
+                mainImage.setAttribute('data-zoom-image', `${window.API_BASE_URL}${image.image}`);
                 
                 // Update zoom image to match the new main image
                 const zoomImage = document.getElementById('zoom-image');
                 if (zoomImage) {
-                    zoomImage.src = `${API_BASE_URL}${image.image}`;
+                    zoomImage.src = `${window.API_BASE_URL}${image.image}`;
                 }
                 
                 // Reinitialize Elevate Zoom with new image
@@ -356,16 +366,16 @@ function populateProductGallery(product) {
             // Set first image (order 1) as active by default
             if (index === 0) {
                 thumbnail.style.borderColor = '#e83e8c';
-                mainImage.src = `${API_BASE_URL}${image.image}`;
+                mainImage.src = `${window.API_BASE_URL}${image.image}`;
                 mainImage.alt = image.alt_text || product.name;
-                mainImage.setAttribute('data-zoom-image', `${API_BASE_URL}${image.image}`);
+                mainImage.setAttribute('data-zoom-image', `${window.API_BASE_URL}${image.image}`);
             }
             
             thumbnailList.appendChild(thumbnail);
         });
     } else {
         // No images available, show placeholder
-        mainImage.src = `${API_BASE_URL}/static/images/product-01.jpg`;
+        mainImage.src = `${window.API_BASE_URL}/static/images/product-01.jpg`;
         mainImage.alt = product.name;
     }
 
@@ -552,7 +562,7 @@ function restoreModalStructure() {
         if (contentContainer) {
             contentContainer.innerHTML = `
                 <button class="how-pos3 hov3 trans-04 js-hide-modal1">
-                    <img src="${API_BASE_URL}/static/images/icons/icon-close.png" alt="CLOSE">
+                    <img src="${window.API_BASE_URL}/static/images/icons/icon-close.png" alt="CLOSE">
                 </button>
 
                 <div class="row">
@@ -759,6 +769,11 @@ async function initProducts() {
 
 // Event listeners
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Index.js loaded, checking cart functions...');
+    console.log('addToCart available:', typeof addToCart);
+    console.log('getCartItemCount available:', typeof getCartItemCount);
+    console.log('showNotification available:', typeof showNotification);
+    
     initProducts();
     
     // Add event listeners for wishlist functionality
