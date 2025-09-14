@@ -3,6 +3,7 @@ from .models import UserProfile
 from .serializers import UserProfileSerializer
 
 class UserProfileViewSet(viewsets.ModelViewSet):
+    queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
 
     def get_queryset(self):
