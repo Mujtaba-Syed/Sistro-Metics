@@ -154,9 +154,9 @@
 				<div class="new-arrivals-slider" style="overflow: hidden; position: relative;">
 					<div class="new-arrivals-track" style="display: flex; transition: transform 0.3s ease; gap: 20px;">
 						{% for product in new_arrivals %}
-						<div class="new-arrivals-slide" style="flex: 0 0 calc(25% - 15px); min-width: 250px;">
+                        <div class="new-arrivals-slide" style="flex: 0 0 calc(25% - 15px); min-width: 250px;">
 							<!-- Block2 -->
-							<div class="block2" style="border: 2px solid #e83e8c; border-radius: 8px; padding: 8px; overflow: visible; display: flex; flex-direction: column; min-height: 400px; height: auto;">
+                            <div class="block2" style="border: 2px solid #e83e8c; border-radius: 8px; padding: 8px; overflow: visible; display: flex; flex-direction: column; min-height: 480px; height: auto;">
 								<div class="block2-pic hov-img0" style="overflow: hidden; position: relative; cursor: zoom-in; flex-shrink: 0; height: 200px;">
 									{% if product.images.first %}
 										<img src="{{ base_url }}{{ product.images.first.image.url }}" alt="{{ product.name }}" onerror="this.src='{{ base_url }}/static/images/product-01.jpg'" style="transition: transform 0.3s ease; width: 100%; height: 100%; object-fit: cover; transform-origin: center;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
@@ -177,7 +177,7 @@
 									{% endif %}
 								</div>
 
-								<div class="block2-txt flex-w flex-t p-t-14" style="flex-grow: 1;">
+                                <div class="block2-txt flex-w flex-t p-t-14" style="flex-grow: 1; min-height: 160px;">
 									<div class="block2-txt-child1 flex-col-l">
 										<a href="product-detail.html?id={{ product.id }}" class="stext-104 cl5 hov-cl1 trans-04 js-name-b2 p-b-6">
 											{{ product.name }}
@@ -512,7 +512,7 @@
 				{% for product in all_products %}
 				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item">
 					<!-- Block2 -->
-					<div class="block2" style="border: 2px solid #e83e8c; border-radius: 8px; padding: 8px; overflow: visible; display: flex; flex-direction: column; min-height: 400px; height: auto;">
+                    <div class="block2" style="border: 2px solid #e83e8c; border-radius: 8px; padding: 8px; overflow: visible; display: flex; flex-direction: column; min-height: 480px; height: auto;">
 						<div class="block2-pic hov-img0" style="overflow: hidden; position: relative; cursor: zoom-in; flex-shrink: 0; height: 200px;">
 							{% if product.images.first %}
 								<img src="{{ base_url }}{{ product.images.first.image.url }}" alt="{{ product.name }}" onerror="this.src='{{ base_url }}/static/images/product-01.jpg'" style="transition: transform 0.3s ease; width: 100%; height: 100%; object-fit: cover; transform-origin: center;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
@@ -533,7 +533,7 @@
 							{% endif %}
 						</div>
 
-						<div class="block2-txt flex-w flex-t p-t-14" style="flex-grow: 1;">
+                        <div class="block2-txt flex-w flex-t p-t-14" style="flex-grow: 1; min-height: 160px;">
 							<div class="block2-txt-child1 flex-col-l">
 								<a href="product-detail.html?id={{ product.id }}" class="stext-104 cl5 hov-cl1 trans-04 js-name-b2 p-b-6">
 									{{ product.name }}
