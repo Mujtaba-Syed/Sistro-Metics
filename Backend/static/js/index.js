@@ -6,11 +6,21 @@ const productGrid = document.querySelector('.isotope-grid');
 // Fetch individual product details for quick view
 async function fetchProductDetail(productId) {
     try {
-        const response = await fetch(`${window.API_BASE_URL}/product/products/${productId}/`);
+        console.log('Fetching product details for ID:', productId);
+        console.log('API Base URL:', window.API_BASE_URL);
+        
+        const url = `${window.API_BASE_URL}/product/products/${productId}/`;
+        console.log('Fetching from URL:', url);
+        
+        const response = await fetch(url);
+        console.log('Response status:', response.status);
+        
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
+        
         const product = await response.json();
+        console.log('Product data received:', product);
         return product;
     } catch (error) {
         console.error('Error fetching product details:', error);
@@ -48,24 +58,38 @@ function generateStars(rating) {
 function showQuickViewLoading() {
     const modal = document.querySelector('.js-modal1');
     if (modal) {
-        modal.innerHTML = `
-            <div class="wrap-modal1">
-                <div class="overlay-modal1"></div>
-                <div class="modal1-content">
-                    <div class="close-modal1 js-hide-modal1">
-                        <img src="${window.API_BASE_URL}/static/images/icons/icon-close.png" alt="CLOSE">
-                    </div>
-                    <div class="wrap-pic-w p-lr-38 p-t-27 p-b-34">
-                        <div class="text-center">
-                            <div class="spinner-border" role="status">
-                                <span class="sr-only">Loading...</span>
+        // Show the modal first
+        modal.classList.add('show-modal1');
+        
+        // Update the content to show loading
+        const nameElement = document.querySelector('.js-name-detail');
+        const priceElement = document.querySelector('.js-price-detail');
+        const descElement = document.querySelector('.js-description-detail');
+        const ratingStarsElement = document.querySelector('.js-rating-stars');
+        const ratingTextElement = document.querySelector('.js-rating-text');
+        const galleryElement = document.querySelector('#quick-view-gallery');
+        
+        if (nameElement) nameElement.textContent = 'Loading...';
+        if (priceElement) priceElement.innerHTML = '<span style="color: #999;">Loading price...</span>';
+        if (descElement) descElement.textContent = 'Loading product details...';
+        if (ratingStarsElement) ratingStarsElement.innerHTML = '';
+        if (ratingTextElement) ratingTextElement.textContent = '';
+        if (galleryElement) {
+            galleryElement.innerHTML = `
+                <div class="gallery-item">
+                    <div class="wrap-pic-w pos-relative">
+                        <div style="width: 100%; height: 300px; background: #f5f5f5; display: flex; align-items: center; justify-content: center;">
+                            <div style="text-align: center;">
+                                <div class="spinner-border" role="status" style="width: 3rem; height: 3rem; color: #e83e8c;">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                                <p style="margin-top: 15px; color: #666;">Loading product images...</p>
                             </div>
-                            <p class="stext-105 cl3 p-t-10">Loading product details...</p>
                         </div>
                     </div>
                 </div>
-            </div>
-        `;
+            `;
+        }
     }
 }
 
@@ -73,124 +97,62 @@ function showQuickViewLoading() {
 function showQuickViewError(message) {
     const modal = document.querySelector('.js-modal1');
     if (modal) {
-        modal.innerHTML = `
-            <div class="wrap-modal1">
-                <div class="overlay-modal1"></div>
-                <div class="modal1-content">
-                    <div class="close-modal1 js-hide-modal1">
-                        <img src="${window.API_BASE_URL}/static/images/icons/icon-close.png" alt="CLOSE">
-                    </div>
-                    <div class="wrap-pic-w p-lr-38 p-t-27 p-b-34">
-                        <div class="text-center">
-                            <h3 class="stext-104 cl2">Error</h3>
-                            <p class="stext-105 cl3">${message}</p>
+        // Show the modal first
+        modal.classList.add('show-modal1');
+        
+        // Update the content to show error
+        const nameElement = document.querySelector('.js-name-detail');
+        const priceElement = document.querySelector('.js-price-detail');
+        const descElement = document.querySelector('.js-description-detail');
+        const ratingStarsElement = document.querySelector('.js-rating-stars');
+        const ratingTextElement = document.querySelector('.js-rating-text');
+        const galleryElement = document.querySelector('#quick-view-gallery');
+        
+        if (nameElement) nameElement.textContent = 'Error Loading Product';
+        if (priceElement) priceElement.innerHTML = '<span style="color: #dc3545;">Error</span>';
+        if (descElement) descElement.textContent = message;
+        if (ratingStarsElement) ratingStarsElement.innerHTML = '';
+        if (ratingTextElement) ratingTextElement.textContent = '';
+        if (galleryElement) {
+            galleryElement.innerHTML = `
+                <div class="gallery-item">
+                    <div class="wrap-pic-w pos-relative">
+                        <div style="width: 100%; height: 300px; background: #f8f9fa; display: flex; align-items: center; justify-content: center; border: 2px dashed #dc3545;">
+                            <div style="text-align: center; color: #dc3545;">
+                                <i class="fa fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                                <p style="margin: 0;">Failed to load product images</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        `;
+            `;
+        }
     }
 }
 
-// Restore original modal structure
-function restoreModalStructure() {
-    const modal = document.querySelector('.js-modal1');
-    if (modal) {
-        modal.innerHTML = `
-            <div class="wrap-modal1">
-                <div class="overlay-modal1"></div>
-                <div class="modal1-content">
-                    <div class="close-modal1 js-hide-modal1">
-                        <img src="${window.API_BASE_URL}/static/images/icons/icon-close.png" alt="CLOSE">
-                    </div>
-                    <div class="wrap-pic-w p-lr-38 p-t-27 p-b-34">
-                        <div class="col-sm-6 col-md-7 col-lg-8 p-b-30">
-                            <div class="wrap-pic-w">
-                                <div class="product-gallery">
-                                    <!-- Product images will be populated here -->
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-md-5 col-lg-4 p-b-30">
-                            <div class="p-r-50 p-t-5 p-lr-0-lg">
-                                <h4 class="mtext-105 cl2 js-name-detail">
-                                    Product Name
-                                </h4>
-                                <span class="mtext-106 cl2">
-                                    Rs 0.00
-                                </span>
-                                <p class="stext-102 cl3 p-t-23">
-                                    Product description will be loaded here.
-                                </p>
-                                <div class="p-t-33">
-                                    <div class="flex-w flex-r-m p-b-10">
-                                        <div class="size-203 flex-c-m respon6">
-                                            Size
-                                        </div>
-                                        <div class="size-204 respon6-next">
-                                            <div class="rs1-select2 bor8 bg0">
-                                                <select class="js-select2" name="time">
-                                                    <option>Choose an option</option>
-                                                    <option>Size S</option>
-                                                    <option>Size M</option>
-                                                    <option>Size L</option>
-                                                    <option>Size XL</option>
-                                                </select>
-                                                <div class="dropDownSelect2"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex-w flex-r-m p-b-10">
-                                        <div class="size-203 flex-c-m respon6">
-                                            Color
-                                        </div>
-                                        <div class="size-204 respon6-next">
-                                            <div class="rs1-select2 bor8 bg0">
-                                                <select class="js-select2" name="time">
-                                                    <option>Choose an option</option>
-                                                    <option>Red</option>
-                                                    <option>Green</option>
-                                                    <option>Blue</option>
-                                                </select>
-                                                <div class="dropDownSelect2"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex-w flex-r-m p-b-10">
-                                        <div class="size-203 flex-c-m respon6">
-                                            Quantity
-                                        </div>
-                                        <div class="size-204 respon6-next">
-                                            <div class="wrap-num-product flex-w m-r-20 m-tb-10">
-                                                <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
-                                                    <i class="fs-16 zmdi zmdi-minus"></i>
-                                                </div>
-                                                <input class="mtext-104 cl3 txt-center num-product" type="number" name="num-product" value="1">
-                                                <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
-                                                    <i class="fs-16 zmdi zmdi-plus"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex-w flex-m p-l-100 p-t-40 p-lr-15-sm">
-                                        <div class="flex-c-m stext-101 cl2 size-104 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-addcart-detail">
-                                            Add to cart
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-}
 
 // Populate product gallery in quick view modal
 function populateProductGallery(product) {
-    const galleryContainer = document.querySelector('.product-gallery');
-    if (!galleryContainer || !product.images || product.images.length === 0) {
+    const galleryContainer = document.querySelector('#quick-view-gallery');
+    if (!galleryContainer) {
+        console.warn('Gallery container not found');
+        return;
+    }
+    
+    // Handle case when no images are available
+    if (!product.images || product.images.length === 0) {
+        galleryContainer.innerHTML = `
+            <div class="gallery-item">
+                <div class="wrap-pic-w pos-relative">
+                    <div style="width: 100%; height: 300px; background: #f5f5f5; display: flex; align-items: center; justify-content: center; border: 2px dashed #ddd;">
+                        <div style="text-align: center; color: #999;">
+                            <i class="fa fa-image" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                            <p style="margin: 0;">No images available</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
         return;
     }
 
@@ -199,33 +161,60 @@ function populateProductGallery(product) {
     
     let galleryHTML = '';
     
-    // Main image
-    if (sortedImages[0]) {
-        const mainImageUrl = `${window.API_BASE_URL}${sortedImages[0].image}`;
+    // Create gallery items for each image
+    sortedImages.forEach((image, index) => {
+        const imageUrl = `${window.API_BASE_URL}${image.image}`;
+        
         galleryHTML += `
-            <div class="main-image">
-                <img src="${mainImageUrl}" alt="${product.name}" style="width: 100%; height: auto;">
+            <div class="gallery-item" data-thumb="${imageUrl}">
+                <div class="wrap-pic-w pos-relative">
+                    <img src="${imageUrl}" alt="${image.alt_text || product.name}" 
+                         class="quick-view-main-image" 
+                         style="width: 100%; height: auto; max-height: 400px; object-fit: contain;">
+                    <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" 
+                       href="${imageUrl}" data-lightbox="gallery">
+                        <i class="fa fa-expand"></i>
+                    </a>
+                </div>
             </div>
         `;
-    }
-    
-    // Thumbnail images
-    if (sortedImages.length > 1) {
-        galleryHTML += '<div class="thumbnails" style="display: flex; gap: 10px; margin-top: 10px;">';
-        sortedImages.forEach((image, index) => {
-            const thumbUrl = `${window.API_BASE_URL}${image.image}`;
-            galleryHTML += `
-                <img src="${thumbUrl}" alt="${product.name}" 
-                     style="width: 60px; height: 60px; object-fit: cover; cursor: pointer; border: 2px solid transparent;"
-                     onmouseover="this.style.borderColor='#e83e8c'"
-                     onmouseout="this.style.borderColor='transparent'"
-                     onclick="document.querySelector('.main-image img').src='${thumbUrl}'">
-            `;
-        });
-        galleryHTML += '</div>';
-    }
+    });
     
     galleryContainer.innerHTML = galleryHTML;
+    
+    // For quick view modal, we'll use a simple image display without Slick slider
+    // to avoid the pagination issues. The images will be displayed in a clean layout.
+    console.log('Gallery populated with', sortedImages.length, 'images');
+    
+    // Add click handlers for image switching if there are multiple images
+    if (sortedImages.length > 1) {
+        const images = galleryContainer.querySelectorAll('.quick-view-main-image');
+        images.forEach((img, index) => {
+            img.addEventListener('click', () => {
+                // Simple image switching - show clicked image and hide others
+                images.forEach((otherImg, otherIndex) => {
+                    if (otherIndex === index) {
+                        otherImg.style.display = 'block';
+                        otherImg.parentElement.style.display = 'block';
+                    } else {
+                        otherImg.style.display = 'none';
+                        otherImg.parentElement.style.display = 'none';
+                    }
+                });
+            });
+        });
+        
+        // Show only the first image initially
+        images.forEach((img, index) => {
+            if (index === 0) {
+                img.style.display = 'block';
+                img.parentElement.style.display = 'block';
+            } else {
+                img.style.display = 'none';
+                img.parentElement.style.display = 'none';
+            }
+        });
+    }
 }
 
 // Populate quick view modal with product data
@@ -235,8 +224,11 @@ function populateQuickViewModal(product) {
         return;
     }
 
-    // First, restore the original modal structure
-    restoreModalStructure();
+    // Clear any existing badges first
+    const existingSaleBadge = document.querySelector('.sale-badge');
+    const existingNewBadge = document.querySelector('.new-badge');
+    if (existingSaleBadge) existingSaleBadge.remove();
+    if (existingNewBadge) existingNewBadge.remove();
 
     // Update product name
     const nameElement = document.querySelector('.js-name-detail');
@@ -245,58 +237,69 @@ function populateQuickViewModal(product) {
     }
 
     // Update product price
-    const priceElement = document.querySelector('.mtext-106.cl2');
+    const priceElement = document.querySelector('.js-price-detail');
     if (priceElement) {
         const discountedPrice = product.discounted_price || product.price;
         const originalPrice = product.is_on_sale ? product.price : null;
         
-        if (originalPrice) {
+        if (originalPrice && product.is_on_sale) {
             priceElement.innerHTML = `
                 <span style="text-decoration: line-through; color: #999; margin-right: 10px;">Rs ${originalPrice}</span>
                 <span style="color: #e83e8c; font-weight: bold;">Rs ${discountedPrice}</span>
                 <div style="font-size: 12px; color: #e83e8c; margin-top: 5px;">
-                    Save Rs ${(parseFloat(originalPrice) - parseFloat(discountedPrice)).toFixed(2)}
+                    Save Rs ${(parseFloat(originalPrice) - parseFloat(discountedPrice)).toFixed(2)} (${product.percentage_discount}% off)
                 </div>
             `;
         } else {
-            priceElement.textContent = `Rs ${discountedPrice}`;
+            priceElement.innerHTML = `<span style="color: #333; font-weight: bold;">Rs ${discountedPrice}</span>`;
         }
     }
 
     // Update product description
-    const descElement = document.querySelector('.stext-102.cl3.p-t-23');
+    const descElement = document.querySelector('.js-description-detail');
     if (descElement) {
         descElement.textContent = product.description || 'No description available';
+    }
+
+    // Update rating display
+    const ratingStarsElement = document.querySelector('.js-rating-stars');
+    const ratingTextElement = document.querySelector('.js-rating-text');
+    if (ratingStarsElement && ratingTextElement) {
+        ratingStarsElement.innerHTML = generateStars(parseFloat(product.rating));
+        ratingTextElement.textContent = `${product.rating} (${product.total_reviews} reviews)`;
+    }
+
+    // Update add to cart button with product ID
+    const addToCartButton = document.querySelector('.js-addcart-detail');
+    if (addToCartButton) {
+        addToCartButton.setAttribute('data-product-id', product.id);
     }
 
     // Populate product gallery
     populateProductGallery(product);
 
-    // Add rating display
-    const ratingContainer = document.querySelector('.p-r-50.p-t-5.p-lr-0-lg');
-    if (ratingContainer) {
-        // Check if rating already exists, if not add it
-        let ratingElement = ratingContainer.querySelector('.rating-section');
-        if (!ratingElement) {
-            ratingElement = document.createElement('div');
-            ratingElement.className = 'rating-section';
-            ratingElement.style.cssText = 'margin: 15px 0; display: flex; align-items: center; gap: 10px;';
-            
-            // Insert after price element
-            const priceElement = ratingContainer.querySelector('.mtext-106.cl2');
-            if (priceElement && priceElement.parentNode) {
-                priceElement.parentNode.insertBefore(ratingElement, priceElement.nextSibling);
-            }
+    // Show sale badge if product is on sale
+    if (product.is_on_sale) {
+        const priceContainer = document.querySelector('.js-price-detail');
+        if (priceContainer) {
+            const saleBadge = document.createElement('div');
+            saleBadge.className = 'sale-badge';
+            saleBadge.style.cssText = 'background: #e83e8c; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; display: inline-block; margin-top: 5px;';
+            saleBadge.textContent = 'SALE';
+            priceContainer.appendChild(saleBadge);
         }
-        
-        ratingElement.innerHTML = `
-            <div class="stars" style="display: flex; gap: 2px;">
-                ${generateStars(product.rating)}
-            </div>
-            <span class="rating-text" style="font-size: 14px; color: #666; font-weight: 500;">
-                ${product.rating} (${product.total_reviews} reviews)
-            </span>
-        `;
+    }
+
+    // Show new badge if product is new
+    if (product.is_new) {
+        const nameContainer = document.querySelector('.js-name-detail');
+        if (nameContainer) {
+            const newBadge = document.createElement('span');
+            newBadge.className = 'new-badge';
+            newBadge.style.cssText = 'background: #28a745; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: bold; margin-left: 10px;';
+            newBadge.textContent = 'NEW';
+            nameContainer.appendChild(newBadge);
+        }
     }
 }
 
@@ -357,6 +360,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
         }
         
+        // Handle add to cart from quick view modal
+        if (e.target.closest('.js-addcart-detail')) {
+            e.preventDefault();
+            const button = e.target.closest('.js-addcart-detail');
+            const productId = button.getAttribute('data-product-id');
+            const quantity = document.querySelector('.num-product').value || 1;
+            
+            console.log('Add to cart from quick view:', productId, 'quantity:', quantity);
+            
+            if (typeof addToCart === 'function') {
+                addToCart(productId, parseInt(quantity));
+                // Close the modal after adding to cart
+                hideQuickViewModal();
+            } else {
+                console.error('addToCart function not available');
+                alert('Add to cart functionality not available');
+            }
+        }
+        
         // Handle modal close buttons
         if (e.target.closest('.js-hide-modal1')) {
             e.preventDefault();
@@ -375,4 +397,3 @@ window.fetchProductDetail = fetchProductDetail;
 window.populateQuickViewModal = populateQuickViewModal;
 window.showQuickViewModal = showQuickViewModal;
 window.hideQuickViewModal = hideQuickViewModal;
-window.restoreModalStructure = restoreModalStructure;

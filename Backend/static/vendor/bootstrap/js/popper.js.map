@@ -1,0 +1,9 @@
+{
+  "version": 3,
+  "sources": ["popper.js"],
+  "names": [],
+  "mappings": "",
+  "file": "popper.js",
+  "sourcesContent": ["// Source map for popper.js - placeholder to prevent 404 errors"],
+  "sourceRoot": ""
+}
