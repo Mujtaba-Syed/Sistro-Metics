@@ -23,6 +23,12 @@ document.addEventListener('DOMContentLoaded', function() {
         loadCartItems();
         setupEventListeners();
     }
+    
+    // Initialize cart modal on all pages
+    initializeCartModal();
+    
+    // Update cart count on all pages
+    updateCartCount();
 });
 
 // Load cart items from API
@@ -267,6 +273,7 @@ async function increaseQuantity(productId) {
         const data = await response.json();
         if (data.success) {
             loadCartItems(); // Reload cart items
+            updateCartCount(); // Update cart count
             showNotification('Quantity increased', 'success');
         } else {
             showNotification(data.message || 'Failed to increase quantity', 'error');
@@ -294,6 +301,7 @@ async function decreaseQuantity(productId) {
         const data = await response.json();
         if (data.success) {
             loadCartItems(); // Reload cart items
+            updateCartCount(); // Update cart count
             showNotification('Quantity decreased', 'success');
         } else {
             showNotification(data.message || 'Failed to decrease quantity', 'error');
@@ -335,6 +343,7 @@ async function updateQuantity(productId, quantity) {
         const data = await response.json();
         if (data.success) {
             loadCartItems(); // Reload cart items
+            updateCartCount(); // Update cart count
             showNotification('Quantity updated', 'success');
         } else {
             showNotification(data.message || 'Failed to update quantity', 'error');
@@ -366,6 +375,7 @@ async function removeItemFromCart(productId) {
         const data = await response.json();
         if (data.success) {
             loadCartItems(); // Reload cart items
+            updateCartCount(); // Update cart count
             showNotification('Item removed from cart', 'success');
         } else {
             showNotification(data.message || 'Failed to remove item', 'error');
@@ -394,6 +404,7 @@ async function clearCart() {
         const data = await response.json();
         if (data.success) {
             loadCartItems(); // Reload cart items
+            updateCartCount(); // Update cart count
             showNotification('Cart cleared', 'success');
         } else {
             showNotification(data.message || 'Failed to clear cart', 'error');
@@ -423,6 +434,10 @@ async function addToCart(productId, quantity = 1) {
         if (data.success) {
             showNotification('Item added to cart', 'success');
             updateCartCount();
+            // Refresh cart modal if it's open
+            if (document.querySelector('.js-panel-cart.show-header-cart')) {
+                loadCartModalItems();
+            }
             return true;
         } else {
             showNotification(data.message || 'Failed to add item to cart', 'error');
@@ -443,7 +458,34 @@ async function getCartItemCount() {
             return 0;
         }
         const data = await response.json();
-        return data.reduce((total, item) => total + item.quantity, 0);
+        
+        // Handle different response formats
+        let items = [];
+        if (Array.isArray(data)) {
+            items = data;
+        } else if (data.data && Array.isArray(data.data)) {
+            items = data.data;
+        } else if (data.items && Array.isArray(data.items)) {
+            items = data.items;
+        } else if (data.results && Array.isArray(data.results)) {
+            items = data.results;
+        } else {
+            console.warn('Unexpected API response format for cart count:', data);
+            return 0;
+        }
+        
+        // Count total quantity of all items
+        const totalCount = items.reduce((total, item) => {
+            return total + (item.quantity || 0);
+        }, 0);
+        
+        console.log('Cart count calculation:', {
+            items: items.length,
+            totalQuantity: totalCount,
+            itemsData: items.map(item => ({ name: item.product?.name, quantity: item.quantity }))
+        });
+        
+        return totalCount;
     } catch (error) {
         console.error('Error getting cart count:', error);
         return 0;
@@ -453,10 +495,188 @@ async function getCartItemCount() {
 // Update cart count in UI
 async function updateCartCount() {
     const count = await getCartItemCount();
+    console.log('Updating cart count to:', count);
+    
+    // Update cart count elements
     const cartCountElements = document.querySelectorAll('.cart-count');
     cartCountElements.forEach(element => {
         element.textContent = count;
     });
+    
+    // Update cart icon data-notify attribute
+    const cartIcons = document.querySelectorAll('.js-show-cart');
+    cartIcons.forEach(element => {
+        element.setAttribute('data-notify', count);
+    });
+    
+    // Update any cart count elements in the navbar
+    const navbarCartCounts = document.querySelectorAll('.header-cart-noti');
+    navbarCartCounts.forEach(element => {
+        element.textContent = count;
+    });
+    
+    // Update cart count in cart icon badge
+    const cartIconBadges = document.querySelectorAll('.header-cart-noti');
+    cartIconBadges.forEach(element => {
+        element.textContent = count;
+    });
+}
+
+// Initialize cart modal functionality
+function initializeCartModal() {
+    // Load cart items for modal when cart icon is clicked
+    const cartIcon = document.querySelector('.js-show-cart');
+    if (cartIcon) {
+        cartIcon.addEventListener('click', function() {
+            loadCartModalItems();
+        });
+    }
+}
+
+// Load cart items for the modal
+async function loadCartModalItems() {
+    try {
+        const response = await fetch(`${CART_API_BASE}get_items/`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        
+        // Handle different response formats
+        let items = [];
+        if (Array.isArray(data)) {
+            items = data;
+        } else if (data.data && Array.isArray(data.data)) {
+            items = data.data;
+        } else if (data.items && Array.isArray(data.items)) {
+            items = data.items;
+        } else if (data.results && Array.isArray(data.results)) {
+            items = data.results;
+        } else {
+            console.warn('Unexpected API response format:', data);
+            items = [];
+        }
+        
+        displayCartModalItems(items);
+    } catch (error) {
+        console.error('Error loading cart modal items:', error);
+        showEmptyCartModal();
+    }
+}
+
+// Display cart items in the modal
+function displayCartModalItems(items) {
+    const modalItemsContainer = document.getElementById('cart-modal-items');
+    const modalTotalElement = document.getElementById('cart-modal-total');
+    
+    if (!modalItemsContainer || !modalTotalElement) {
+        console.error('Cart modal elements not found');
+        return;
+    }
+
+    // Clear existing items
+    modalItemsContainer.innerHTML = '';
+
+    if (items.length === 0) {
+        showEmptyCartModal();
+        return;
+    }
+    
+    // Add cart items to modal
+    items.forEach((item) => {
+        const modalItem = createCartModalItem(item);
+        modalItemsContainer.appendChild(modalItem);
+    });
+
+    // Update modal total
+    updateCartModalTotal(items);
+}
+
+// Create a cart modal item
+function createCartModalItem(item) {
+    const li = document.createElement('li');
+    li.className = 'header-cart-item flex-w flex-t m-b-12';
+    
+    // Check if item has the expected structure
+    if (!item || !item.product) {
+        console.error('Invalid item structure:', item);
+        return li;
+    }
+
+    // Get the primary image (order: 1) or first available image, or fallback to product.image
+    let productImage = '/static/images/product-01.jpg';
+    
+    if (item.product.images && item.product.images.length > 0) {
+        // Sort images by order and get the first one (order: 1)
+        const sortedImages = item.product.images.sort((a, b) => a.order - b.order);
+        productImage = sortedImages[0].image;
+    } else if (item.product.image) {
+        productImage = item.product.image;
+    }
+    
+    const productName = item.product.name;
+    const productPrice = parseFloat(item.product.price);
+    const quantity = item.quantity;
+
+    // Construct proper image URL
+    const imageUrl = productImage.startsWith('http') 
+        ? productImage 
+        : productImage.startsWith('/') 
+            ? `${API_BASE_URL}${productImage}` 
+            : `${API_BASE_URL}/${productImage}`;
+
+    li.innerHTML = `
+        <div class="header-cart-item-img">
+            <img src="${imageUrl}" alt="${productName}" onerror="console.log('Modal image failed to load:', this.src); this.src='${API_BASE_URL}/static/images/product-01.jpg'">
+        </div>
+
+        <div class="header-cart-item-txt p-t-8">
+            <a href="#" class="header-cart-item-name m-b-18 hov-cl1 trans-04">
+                ${productName}
+            </a>
+
+            <span class="header-cart-item-info">
+                ${quantity} x Rs ${productPrice.toFixed(2)}
+            </span>
+        </div>
+    `;
+
+    return li;
+}
+
+// Show empty cart modal
+function showEmptyCartModal() {
+    const modalItemsContainer = document.getElementById('cart-modal-items');
+    const modalTotalElement = document.getElementById('cart-modal-total');
+    
+    if (!modalItemsContainer || !modalTotalElement) return;
+
+    modalItemsContainer.innerHTML = `
+        <li class="header-cart-item flex-w flex-t m-b-12">
+            <div class="header-cart-item-txt p-t-8" style="width: 100%; text-align: center;">
+                <span class="header-cart-item-name m-b-18 hov-cl1 trans-04">
+                    Your cart is empty
+                </span>
+                <span class="header-cart-item-info">
+                    Add some products to get started!
+                </span>
+            </div>
+        </li>
+    `;
+    
+    modalTotalElement.textContent = 'Total: Rs 0.00';
+}
+
+// Update cart modal total
+function updateCartModalTotal(items) {
+    const modalTotalElement = document.getElementById('cart-modal-total');
+    if (!modalTotalElement) return;
+
+    const total = items.reduce((sum, item) => {
+        return sum + (parseFloat(item.product.price) * item.quantity);
+    }, 0);
+
+    modalTotalElement.textContent = `Total: Rs ${total.toFixed(2)}`;
 }
 
 // Show notification
@@ -503,6 +723,9 @@ window.decreaseQuantity = decreaseQuantity;
 window.updateQuantity = updateQuantity;
 window.removeItemFromCart = removeItemFromCart;
 window.clearCart = clearCart;
+window.loadCartModalItems = loadCartModalItems;
+window.displayCartModalItems = displayCartModalItems;
+window.updateCartModalTotal = updateCartModalTotal;
 
 console.log('Cart functions exported to window:', {
     addToCart: typeof window.addToCart,
