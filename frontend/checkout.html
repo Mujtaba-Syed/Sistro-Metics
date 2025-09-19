@@ -29,12 +29,64 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'css/util.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
 <!--===============================================================================================-->
+	<style>
+		/* Prevent horizontal scrolling */
+		body {
+			overflow-x: hidden;
+		}
+		
+		.container-fluid {
+			overflow-x: hidden;
+		}
+		
+		/* Ensure content doesn't exceed viewport width */
+		.table-responsive {
+			overflow-x: auto;
+		}
+		
+		/* Fix any elements that might cause horizontal overflow */
+		* {
+			box-sizing: border-box;
+		}
+		
+		/* Ensure the main content area doesn't overflow */
+		.container {
+			max-width: 100%;
+			overflow-x: hidden;
+		}
+		
+		/* Fix table column widths to prevent overflow */
+		.table-shopping-cart {
+			table-layout: fixed;
+		}
+		
+		.table-shopping-cart .column-1 {
+			width: 20%;
+		}
+		
+		.table-shopping-cart .column-2 {
+			width: 35%;
+		}
+		
+		.table-shopping-cart .column-3 {
+			width: 15%;
+		}
+		
+		.table-shopping-cart .column-4 {
+			width: 15%;
+		}
+		
+		.table-shopping-cart .column-5 {
+			width: 15%;
+		}
+	</style>
+<!--===============================================================================================-->
 </head>
 <body class="animsition">
 	
 	<!-- Header -->
 	<header class="header-v4">
-
+		<!-- Header content can be added here if needed -->
 	</header>
 
 	{% include 'includes/navbar.html' %}
@@ -131,8 +183,8 @@
                     <div class="col-md-12 col-lg-6 col-xl-5">
 
                         <!-- Cart Summary -->
-                        <div class="table-responsive mb-4">
-                            <table class="table-shopping-cart">
+                        <div class="table-responsive mb-4" style="overflow-x: auto; max-width: 100%;">
+                            <table class="table-shopping-cart" style="min-width: 100%; width: 100%;">
                                 <tr class="table_head">
                                     <th class="column-1">Product</th>
                                     <th class="column-2"></th>
@@ -168,7 +220,7 @@
                                 <tr class="table_row">
                                     <td class="column-1">
                                         <div class="how-itemcart1">
-                                            <img src="{% static 'images/item-cart-05.jpg' %}		" alt="IMG">
+                                            <img src="{% static 'images/item-cart-05.jpg' %}" alt="IMG">
                                         </div>
                                     </td>
                                     <td class="column-2">Lightweight Jacket</td>
@@ -313,9 +365,9 @@
 		})
 	</script>
 <!--===============================================================================================-->
-	<script src="{% static 'vendor/MagnificPopup/jquery.magnific-popup.min.js' %}		"></script>
+	<script src="{% static 'vendor/MagnificPopup/jquery.magnific-popup.min.js' %}"></script>
 <!--===============================================================================================-->
-	<script src="{% static 'vendor/perfect-scrollbar/perfect-scrollbar.min.js' %}	"></script>
+	<script src="{% static 'vendor/perfect-scrollbar/perfect-scrollbar.min.js' %}"></script>
 	<script>
 		$('.js-pscroll').each(function(){
 			$(this).css('position','relative');
