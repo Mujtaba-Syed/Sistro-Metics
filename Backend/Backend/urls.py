@@ -28,6 +28,9 @@ urlpatterns = [
     path('blog/',include('Blog.urls')),
     path('product/',include('Product.urls')),
     path('review/',include('Review.urls')),
+    
+    # Django Allauth URLs
+    path('accounts/', include('allauth.urls')),
 ]
 
 # Serve static and media files during development

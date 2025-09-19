@@ -13,4 +13,8 @@ urlpatterns = [
     path('cart/',CartView.as_view(),name='cart'),
     path('checkout/',CheckoutView.as_view(),name='checkout'),
     path('product/',ProductView.as_view(),name='product'),
+    
+    # API endpoints
+    path('api/add-to-cart/',AddToCartAPIView.as_view(),name='add-to-cart'),
+    path('oauth/google/callback/',GoogleOAuthCallbackView.as_view(),name='google-oauth-callback'),
 ]
