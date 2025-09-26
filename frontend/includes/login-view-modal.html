@@ -1,0 +1,501 @@
+{% load static %}
+
+<style>
+.login-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-modal-content {
+    background-color: #fff;
+    border-radius: 15px;
+    padding: 40px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-modal-close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #999;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.login-modal-close:hover {
+    color: #333;
+}
+
+.login-modal-title {
+    font-family: 'Poppins-Bold', Arial, sans-serif;
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.login-modal-subtitle {
+    font-family: 'Poppins-Regular', Arial, sans-serif;
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 30px;
+    line-height: 1.5;
+}
+
+.login-buttons-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Poppins-Medium', Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+
+.login-btn-guest {
+    background-color: #717fe0;
+    color: white;
+    border: 2px solid #717fe0;
+}
+
+.login-btn-guest:hover {
+    background-color: #5a6fd8;
+    border-color: #5a6fd8;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(113, 127, 224, 0.3);
+}
+
+.login-btn-google {
+    background-color: white;
+    color: #333;
+    border: 2px solid #e6e6e6;
+}
+
+.login-btn-google:hover {
+    background-color: #f8f9fa;
+    border-color: #ddd;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.google-icon {
+    width: 20px;
+    height: 20px;
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEwIDMuOTk5OTlDMTIuNzYxNCAzLjk5OTk5IDE1LjA5MDkgNS4zNjM2MyAxNi42MzY0IDcuNDU0NTRMMTkuMDkwOSA1QzE3LjA5MDkgMi4yNzI3MyAxNC4wNDU1IDAgMTAgMEM2LjE4MTgyIDAgMi44ODE4MiAyLjcyNzI3IDEuMDkwOTEgNi4zNjM2NEw0LjA5MDkxIDguNDU0NTRDNS4yNzI3MyA2LjA5MDkxIDcuNDU0NTUgMy45OTk5OSAxMCAzLjk5OTk5WiIgZmlsbD0iI0VBMzQ0NSIvPgo8cGF0aCBkPSJNMTkuMDkwOSAxMEMxOS4wOTA5IDkuMzYzNjQgMTkuMDA5MSA4LjcyNzI3IDE4LjgxODIgOC4xMzYzNkgxMFYxMS44NjM2SDE1LjM2MzZDMTUuMDkwOSAxMi42MzY0IDE0LjYzNjQgMTMuMjcyNyAxNC4wOTA5IDEzLjcyNzNDMTMuNTQ1NSAxNC4xODE4IDEyLjgxODIgMTQuNDU0NSAxMiAxNC40NTQ1QzEwLjU0NTUgMTQuNDU0NSA5LjI3MjczIDEzLjYzNjQgOC44MTgxOCAxMi4zNjM2QzguNjM2MzYgMTEuODE4MiA4LjU0NTQ1IDExLjE4MTggOC41NDU0NSAxMC41NDU1QzguNTQ1NDUgOS45MDkwOSA4LjYzNjM2IDkuMjcyNzMgOC44MTgxOCA4LjcyNzI3QzkuMjcyNzMgNy40NTQ1NSAxMC41NDU1IDYuNjM2MzYgMTIgNi42MzYzNkMxMi44MTgyIDYuNjM2MzYgMTMuNTQ1NSA2LjkwOTA5IDE0LjA5MDkgNy4zNjM2NEwxNi4wOTA5IDUuMzYzNjRDMTUuMDkwOSA0LjM2MzY0IDEzLjgxODIgMy42MzYzNiAxMi40NTQ1IDMuMTgxODJDMTEuMDkwOSAyLjcyNzI3IDkuNTQ1NDUgMi41NDU0NSA4IDIuNTQ1NDVDNS4zNjM2NCAyLjU0NTQ1IDIuOTA5MDkgMy42MzYzNiAxIDUuMzYzNjRMNC4wOTA5MSA3LjQ1NDU0QzUuMjcyNzMgNS4wOTA5MSA3LjQ1NDU1IDMuOTk5OTkgMTAgMy45OTk5OVoiIGZpbGw9IiM0Mjg1RjQiLz4KPHBhdGggZD0iTTE5LjA5MDkgMTBDMTkuMDkwOSA5LjM2MzY0IDE5LjAwOTEgOC43MjcyNyAxOC44MTgyIDguMTM2MzZIMTBWMTEuODYzNkgxNS4zNjM2QzE1LjA5MDkgMTIuNjM2NCAxNC42MzY0IDEzLjI3MjcgMTQuMDkwOSAxMy43MjczQzEzLjU0NTUgMTQuMTgxOCAxMi44MTgyIDE0LjQ1NDUgMTIgMTQuNDU0NUMxMC41NDU1IDE0LjQ1NDUgOS4yNzI3MyAxMy42MzY0IDguODE4MTggMTIuMzYzNkM4LjYzNjM2IDExLjgxODIgOC41NDU0NSAxMS4xODE4IDguNTQ1NDUgMTAuNTQ1NUM4LjU0NTQ1IDkuOTA5MDkgOC42MzYzNiA5LjI3MjczIDguODE4MTggOC43MjcyN0M5LjI3MjczIDcuNDU0NTUgMTAuNTQ1NSA2LjYzNjM2IDEyIDYuNjM2MzZDMTIuODE4MiA2LjYzNjM2IDEzLjU0NTUgNi45MDkwOSAxNC4wOTA5IDcuMzYzNjRMMTYuMDkwOSA1LjM2MzY0QzE1LjA5MDkgNC4zNjM2NCAxMy44MTgyIDMuNjM2MzYgMTIuNDU0NSAzLjE4MTgyQzExLjA5MDkgMi43MjcyNyA5LjU0NTQ1IDIuNTQ1NDUgOCAyLjU0NTQ1QzUuMzYzNjQgMi41NDU0NSAyLjkwOTA5IDMuNjM2MzYgMSA1LjM2MzY0TDQuMDkwOTEgNy40NTQ1NEM1LjI3MjczIDUuMDkwOTEgNy40NTQ1NSAzLjk5OTk5IDEwIDMuOTk5OTlaIiBmaWxsPSIjRkJCQzA1Ii8+CjxwYXRoIGQ9Ik0xOS4wOTA5IDEwQzE5LjA5MDkgOS4zNjM2NCAxOS4wMDkxIDguNzI3MjcgMTguODE4MiA4LjEzNjM2SDEwVjExLjg2MzZIMTUuMzYzNkMxNS4wOTA5IDEyLjYzNjQgMTQuNjM2NCAxMy4yNzI3IDE0LjA5MDkgMTMuNzI3M0MxMy41NDU1IDE0LjE4MTggMTIuODE4MiAxNC40NTQ1IDEyIDE0LjQ1NDVDMTAuNTQ1NSAxNC40NTQ1IDkuMjcyNzMgMTMuNjM2NCA4LjgxODE4IDEyLjM2MzZDOC42MzYzNiAxMS44MTgyIDguNTQ1NDUgMTEuMTgxOCA4LjU0NTQ1IDEwLjU0NTVDOC41NDU0NSA5LjkwOTA5IDguNjM2MzYgOS4yNzI3MyA4LjgxODE4IDguNzI3MjdDOS4yNzI3MyA3LjQ1NDU1IDEwLjU0NTUgNi42MzYzNiAxMiA2LjYzNjM2QzEyLjgxODIgNi42MzYzNiAxMy41NDU1IDYuOTA5MDkgMTQuMDkwOSA3LjM2MzY0TDE2LjA5MDkgNS4zNjM2NEMxNS4wOTA5IDQuMzYzNjQgMTMuODE4MiAzLjYzNjM2IDEyLjQ1NDUgMy4xODE4MkMxMS4wOTA5IDIuNzI3MjcgOS41NDU0NSAyLjU0NTQ1IDggMi41NDU0NUM1LjM2MzY0IDIuNTQ1NDUgMi45MDkwOSAzLjYzNjM2IDEgNS4zNjM2NEw0LjA5MDkxIDcuNDU0NTRDNS4yNzI3MyA1LjA5MDkxIDcuNDU0NTUgMy45OTk5OSAxMCAzLjk5OTk5WiIgZmlsbD0iIzM0QTg1MyIvPgo8L3N2Zz4K');
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.login-modal-footer {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e6e6e6;
+}
+
+.login-modal-footer p {
+    font-family: 'Poppins-Regular', Arial, sans-serif;
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+}
+
+.login-modal-footer a {
+    color: #717fe0;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.login-modal-footer a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+    .login-modal-content {
+        padding: 30px 20px;
+        margin: 20px;
+    }
+    
+    .login-modal-title {
+        font-size: 24px;
+    }
+    
+    .login-btn {
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+}
+</style>
+
+<div class="login-modal-overlay" id="loginModal">
+    <div class="login-modal-content">
+        <button class="login-modal-close" onclick="closeLoginModal()">&times;</button>
+        
+        <h2 class="login-modal-title">Welcome!</h2>
+        <p class="login-modal-subtitle">Please choose how you'd like to continue shopping</p>
+        
+        <div class="login-buttons-container">
+            <button class="login-btn login-btn-guest" onclick="loginAsGuest()">
+                <i class="fa fa-user" style="font-size: 18px;"></i>
+                Continue as Guest
+            </button>
+            
+            <button class="login-btn login-btn-google" onclick="loginWithGoogle()">
+                <div class="google-icon"></div>
+                Continue with Google
+            </button>
+        </div>
+        
+        <div class="login-modal-footer">
+            <p>By continuing, you agree to our <a href="#" onclick="event.preventDefault()">Terms of Service</a> and <a href="#" onclick="event.preventDefault()">Privacy Policy</a></p>
+        </div>
+    </div>
+</div>
+
+<script>
+// Global variables for authentication
+let authTokens = {
+    accessToken: null,
+    refreshToken: null,
+    user: null,
+    isGuest: false
+};
+
+// Function to open login modal
+function openLoginModal() {
+    const modal = document.getElementById('loginModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    }
+}
+
+// Function to close login modal
+function closeLoginModal() {
+    const modal = document.getElementById('loginModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto'; // Restore scrolling
+    }
+}
+
+// Function to handle guest login
+function loginAsGuest() {
+    console.log('Guest login clicked');
+    
+    // Set guest authentication
+    authTokens.isGuest = true;
+    authTokens.user = {
+        id: 'guest_' + Date.now(),
+        email: 'guest@example.com',
+        name: 'Guest User',
+        isGuest: true
+    };
+    
+    // Store in sessionStorage for persistence
+    sessionStorage.setItem('authTokens', JSON.stringify(authTokens));
+    
+    // Close modal
+    closeLoginModal();
+    
+    // Show success message
+    showNotification('Welcome! You can now add items to cart.', 'success');
+    
+    // Enable add to cart functionality
+    enableAddToCart();
+}
+
+// Function to handle Google login
+function loginWithGoogle() {
+    console.log('Google login clicked');
+    
+    // Store the current page URL to return after login
+    const returnUrl = window.location.href;
+    
+    // Redirect to our custom Google OAuth start view
+    const googleAuthUrl = `/oauth/google/start/?return_url=${encodeURIComponent(returnUrl)}`;
+    window.location.href = googleAuthUrl;
+}
+
+// Function to show notification
+function showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#17a2b8'};
+        color: white;
+        padding: 15px 20px;
+        border-radius: 5px;
+        z-index: 10000;
+        font-family: 'Poppins-Regular', Arial, sans-serif;
+        font-size: 14px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        animation: slideInRight 0.3s ease-out;
+    `;
+    
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    // Remove notification after 3 seconds
+    setTimeout(() => {
+        notification.style.animation = 'slideOutRight 0.3s ease-in';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 3000);
+}
+
+// Function to enable add to cart functionality
+function enableAddToCart() {
+    // This function will be called after successful login
+    console.log('Add to cart functionality enabled');
+    
+    // You can add any additional setup here
+    // For example, updating UI elements, enabling buttons, etc.
+}
+
+// Function to check if user is authenticated
+function isAuthenticated() {
+    // Check if we have valid tokens in memory
+    const hasValidTokens = !!(authTokens.accessToken && authTokens.user);
+    const isGuestUser = !!(authTokens.isGuest && authTokens.user);
+    
+    console.log('Authentication check:', {
+        hasValidTokens,
+        isGuestUser,
+        authTokens: authTokens
+    });
+    
+    return hasValidTokens || isGuestUser;
+}
+
+// Function to get current user
+function getCurrentUser() {
+    return authTokens.user;
+}
+
+// Function to check what's stored in sessionStorage (for debugging)
+function checkSessionStorage() {
+    const stored = sessionStorage.getItem('authTokens');
+    console.log('SessionStorage content:', stored);
+    if (stored) {
+        try {
+            const parsed = JSON.parse(stored);
+            console.log('Parsed sessionStorage:', parsed);
+        } catch (e) {
+            console.error('Error parsing sessionStorage:', e);
+        }
+    }
+    return stored;
+}
+
+// Function to logout
+function logout() {
+    authTokens = {
+        accessToken: null,
+        refreshToken: null,
+        user: null,
+        isGuest: false
+    };
+    
+    sessionStorage.removeItem('authTokens');
+    showNotification('You have been logged out.', 'info');
+}
+
+// Load authentication state on page load
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Page loaded, checking authentication state...');
+    
+    const savedTokens = sessionStorage.getItem('authTokens');
+    if (savedTokens) {
+        try {
+            authTokens = JSON.parse(savedTokens);
+            console.log('Authentication state loaded from sessionStorage:', authTokens);
+            
+            // Validate the loaded tokens
+            if (!authTokens.user || (!authTokens.accessToken && !authTokens.isGuest)) {
+                console.log('Invalid tokens found, clearing authentication state');
+                authTokens = {
+                    accessToken: null,
+                    refreshToken: null,
+                    user: null,
+                    isGuest: false
+                };
+                sessionStorage.removeItem('authTokens');
+            }
+        } catch (e) {
+            console.error('Error loading authentication state:', e);
+            // Clear invalid tokens
+            authTokens = {
+                accessToken: null,
+                refreshToken: null,
+                user: null,
+                isGuest: false
+            };
+            sessionStorage.removeItem('authTokens');
+        }
+    } else {
+        console.log('No authentication tokens found in sessionStorage');
+    }
+    
+    // Check if this is a Google OAuth callback
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('google_auth') === 'success') {
+        console.log('Google OAuth success detected in URL');
+        handleGoogleAuthCallback();
+    }
+    
+    // Check what's in sessionStorage for debugging
+    console.log('Checking sessionStorage...');
+    checkSessionStorage();
+    
+    // Check if user is authenticated via Django session (silent check)
+    console.log('Checking Django authentication status...');
+    checkDjangoAuthentication(false);
+});
+
+// Function to check Django authentication status
+function checkDjangoAuthentication(showNotification = false) {
+    console.log('Making request to check Django authentication...');
+    
+    // Make a request to check if user is authenticated
+    fetch('/user-auth/check-auth/', {
+        method: 'GET',
+        credentials: 'include', // Include cookies for session authentication
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+        }
+    })
+    .then(response => {
+        console.log('Authentication check response status:', response.status);
+        return response.json();
+    })
+    .then(data => {
+        console.log('Authentication check response data:', data);
+        
+        if (data.authenticated && data.user && data.access_token) {
+            // User is authenticated via Django session and we have valid data
+            authTokens.isGuest = false;
+            authTokens.user = data.user;
+            authTokens.accessToken = data.access_token;
+            authTokens.refreshToken = data.refresh_token;
+            
+            // Save to sessionStorage
+            sessionStorage.setItem('authTokens', JSON.stringify(authTokens));
+            
+            console.log('Django authentication confirmed, tokens saved:', authTokens);
+            
+            // Only show notification if explicitly requested (e.g., after OAuth callback)
+            if (showNotification) {
+                showNotification('Welcome back! You are logged in.', 'success');
+            }
+        } else {
+            console.log('User is not authenticated or missing required data:', data);
+        }
+    })
+    .catch(error => {
+        console.log('Error checking Django authentication:', error);
+    });
+}
+
+// Function to handle successful Google OAuth callback
+function handleGoogleAuthCallback() {
+    console.log('Google OAuth callback detected');
+    
+    // Check Django authentication status after OAuth and show notification
+    checkDjangoAuthentication(true);
+    
+    // Clean up URL parameters
+    const url = new URL(window.location);
+    url.searchParams.delete('google_auth');
+    window.history.replaceState({}, document.title, url);
+}
+
+// Close modal when clicking outside
+document.addEventListener('click', function(event) {
+    const modal = document.getElementById('loginModal');
+    if (event.target === modal) {
+        closeLoginModal();
+    }
+});
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        closeLoginModal();
+    }
+});
+
+// Add CSS animations
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes slideOutRight {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(style);
+</script>

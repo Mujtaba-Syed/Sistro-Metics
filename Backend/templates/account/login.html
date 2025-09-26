@@ -1,0 +1,201 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Sign In - SistoMatic</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'images/icons/favicon.png' %}"/>
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" type="text/css" href="{% static 'fonts/font-awesome-4.7.0/css/font-awesome.min.css' %}">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/util.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Poppins-Regular', Arial, sans-serif;
+        }
+        
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 50px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+        
+        .login-logo {
+            margin-bottom: 30px;
+        }
+        
+        .login-logo h1 {
+            color: #333;
+            font-family: 'Poppins-Bold', Arial, sans-serif;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .login-subtitle {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 40px;
+        }
+        
+        .google-login-btn {
+            background: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            margin-bottom: 20px;
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .google-login-btn:hover {
+            background: #3367d6;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(66, 133, 244, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .google-icon {
+            width: 20px;
+            height: 20px;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEwIDMuOTk5OTlDMTIuNzYxNCAzLjk5OTk5IDE1LjA5MDkgNS4zNjM2MyAxNi42MzY0IDcuNDU0NTRMMTkuMDkwOSA1QzE3LjA5MDkgMi4yNzI3MyAxNC4wNDU1IDAgMTAgMEM2LjE4MTgyIDAgMi44ODE4MiAyLjcyNzI3IDEuMDkwOTEgNi4zNjM2NEw0LjA5MDkxIDguNDU0NTRDNS4yNzI3MyA2LjA5MDkxIDcuNDU0NTUgMy45OTk5OSAxMCAzLjk5OTk5WiIgZmlsbD0iI0VBMzQ0NSIvPgo8cGF0aCBkPSJNMTkuMDkwOSAxMEMxOS4wOTA5IDkuMzYzNjQgMTkuMDA5MSA4LjcyNzI3IDE4LjgxODIgOC4xMzYzNkgxMFYxMS44NjM2SDE1LjM2MzZDMTUuMDkwOSAxMi42MzY0IDE0LjYzNjQgMTMuMjcyNyAxNC4wOTA5IDEzLjcyNzNDMTMuNTQ1NSAxNC4xODE4IDEyLjgxODIgMTQuNDU0NSAxMiAxNC40NTQ1QzEwLjU0NTUgMTQuNDU0NSA5LjI3MjczIDEzLjYzNjQgOC44MTgxOCAxMi4zNjM2QzguNjM2MzYgMTEuODE4MiA4LjU0NTQ1IDExLjE4MTggOC41NDU0NSAxMC41NDU1QzguNTQ1NDUgOS45MDkwOSA4LjYzNjM2IDkuMjcyNzMgOC44MTgxOCA4LjcyNzI3QzkuMjcyNzMgNy40NTQ1NSAxMC41NDU1IDYuNjM2MzYgMTIgNi42MzYzNkMxMi44MTgyIDYuNjM2MzYgMTMuNTQ1NSA2LjkwOTA5IDE0LjA5MDkgNy4zNjM2NEwxNi4wOTA5IDUuMzYzNjRDMTUuMDkwOSA0LjM2MzY0IDEzLjgxODIgMy42MzYzNiAxMi40NTQ1IDMuMTgxODJDMTEuMDkwOSAyLjcyNzI3IDkuNTQ1NDUgMi41NDU0NSA4IDIuNTQ1NDVDNS4zNjM2NCAyLjU0NTQ1IDIuOTA5MDkgMy42MzYzNiAxIDUuMzYzNjRMNC4wOTA5MSA3LjQ1NDU0QzUuMjcyNzMgNS4wOTA5MSA3LjQ1NDU1IDMuOTk5OTkgMTAgMy45OTk5OVoiIGZpbGw9IiM0Mjg1RjQiLz4KPHBhdGggZD0iTTE5LjA5MDkgMTBDMTkuMDkwOSA5LjM2MzY0IDE5LjAwOTEgOC43MjcyNyAxOC44MTgyIDguMTM2MzZIMTBWMTEuODYzNkgxNS4zNjM2QzE1LjA5MDkgMTIuNjM2NCAxNC42MzY0IDEzLjI3MjcgMTQuMDkwOSAxMy43MjczQzEzLjU0NTUgMTQuMTgxOCAxMi44MTgyIDE0LjQ1NDUgMTIgMTQuNDU0NUMxMC41NDU1IDE0LjQ1NDUgOS4yNzI3MyAxMy42MzY0IDguODE4MTggMTIuMzYzNkM4LjYzNjM2IDExLjgxODIgOC41NDU0NSAxMS4xODE4IDguNTQ1NDUgMTAuNTQ1NUM4LjU0NTQ1IDkuOTA5MDkgOC42MzYzNiA5LjI3MjczIDguODE4MTggOC43MjcyN0M5LjI3MjczIDcuNDU0NTUgMTAuNTQ1NSA2LjYzNjM2IDEyIDYuNjM2MzZDMTIuODE4MiA2LjYzNjM2IDEzLjU0NTUgNi45MDkwOSAxNC4wOTA5IDcuMzYzNjRMMTYuMDkwOSA1LjM2MzY0QzE1LjA5MDkgNC4zNjM2NCAxMy44MTgyIDMuNjM2MzYgMTIuNDU0NSAzLjE4MTgyQzExLjA5MDkgMi43MjcyNyA5LjU0NTQ1IDIuNTQ1NDUgOCAyLjU0NTQ1QzUuMzYzNjQgMi41NDU0NSAyLjkwOTA5IDMuNjM2MzYgMSA1LjM2MzY0TDQuMDkwOTEgNy40NTQ1NEM1LjI3MjczIDUuMDkwOTEgNy40NTQ1NSAzLjk5OTk5IDEwIDMuOTk5OTlaIiBmaWxsPSIjRkJCQzA1Ii8+CjxwYXRoIGQ9Ik0xOS4wOTA5IDEwQzE5LjA5MDkgOS4zNjM2NCAxOS4wMDkxIDguNzI3MjcgMTguODE4MiA4LjEzNjM2SDEwVjExLjg2MzZIMTUuMzYzNkMxNS4wOTA5IDEyLjYzNjQgMTQuNjM2NCAxMy4yNzI3IDE0LjA5MDkgMTMuNzI3M0MxMy41NDU1IDE0LjE4MTggMTIuODE4MiAxNC40NTQ1IDEyIDE0LjQ1NDVDMTAuNTQ1NSAxNC40NTQ1IDkuMjcyNzMgMTMuNjM2NCA4LjgxODE4IDEyLjM2MzZDOC42MzYzNiAxMS44MTgyIDguNTQ1NDUgMTEuMTgxOCA4LjU0NTQ1IDEwLjU0NTVDOC41NDU0NSA5LjkwOTA5IDguNjM2MzYgOS4yNzI3MyA4LjgxODE4IDguNzI3MjdDOS4yNzI3MyA3LjQ1NDU1IDEwLjU0NTUgNi42MzYzNiAxMiA2LjYzNjM2QzEyLjgxODIgNi42MzYzNiAxMy41NDU1IDYuOTA5MDkgMTQuMDkwOSA3LjM2MzY0TDE2LjA5MDkgNS4zNjM2NEMxNS4wOTA5IDQuMzYzNjQgMTMuODE4MiAzLjYzNjM2IDEyLjQ1NDUgMy4xODE4MkMxMS4wOTA5IDIuNzI3MjcgOS41NDU0NSAyLjU0NTQ1IDggMi41NDU0NUM1LjM2MzY0IDIuNTQ1NDUgMi45MDkwOSAzLjYzNjM2IDEgNS4zNjM2NEw0LjA5MDkxIDcuNDU0NTRDNS4yNzI3MyA1LjA5MDkxIDcuNDU0NTUgMy45OTk5OSAxMCAzLjk5OTk5WiIgZmlsbD0iIzM0QTg1MyIvPgo8L3N2Zz4K');
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+        
+        .back-to-home {
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+        
+        .back-to-home:hover {
+            color: #333;
+            text-decoration: none;
+        }
+        
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            color: #dc3545;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .success-message {
+            color: #155724;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-logo">
+            <h1>SistoMatic</h1>
+            <p class="login-subtitle">Welcome back! Please sign in to continue</p>
+        </div>
+        
+        <div class="error-message" id="errorMessage"></div>
+        <div class="success-message" id="successMessage"></div>
+        
+        {% if form.errors %}
+            <div class="error-message" style="display: block;">
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        {{ error }}
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        <a href="{% url 'google_login' %}" class="google-login-btn" id="googleLoginBtn">
+            <div class="google-icon"></div>
+            <span id="btnText">Continue with Google</span>
+            <div class="loading-spinner" id="loadingSpinner"></div>
+        </a>
+        
+        <a href="/" class="back-to-home">
+            <i class="fa fa-arrow-left"></i> Back to Home
+        </a>
+    </div>
+
+    <script>
+        // Add loading state to Google login button
+        document.getElementById('googleLoginBtn').addEventListener('click', function(e) {
+            const btnText = document.getElementById('btnText');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            
+            btnText.style.display = 'none';
+            loadingSpinner.style.display = 'inline-block';
+            this.style.pointerEvents = 'none';
+        });
+        
+        // Check for URL parameters and show messages
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get('error');
+        const success = urlParams.get('success');
+        
+        if (error) {
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('errorMessage').textContent = 'Login failed. Please try again.';
+        }
+        
+        if (success) {
+            document.getElementById('successMessage').style.display = 'block';
+            document.getElementById('successMessage').textContent = 'Login successful! Redirecting...';
+        }
+    </script>
+</body>
+</html>

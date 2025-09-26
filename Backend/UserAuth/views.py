@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from django.http import JsonResponse
 from .models import UserProfile
 from .serializers import UserProfileSerializer, UserRegistrationSerializer, UserLoginSerializer
 import json
@@ -181,3 +182,40 @@ class UserLogoutView(APIView):
                 'success': False,
                 'message': 'Logout failed'
             }, status=status.HTTP_400_BAD_REQUEST)
+
+class CheckAuthView(APIView):
+    """
+    Check if user is authenticated via Django session
+    GET /user-auth/check-auth/
+    """
+    permission_classes = [AllowAny]
+    
+    def get(self, request):
+        if request.user.is_authenticated:
+            try:
+                # Generate JWT tokens for the authenticated user
+                refresh = RefreshToken.for_user(request.user)
+                access_token = refresh.access_token
+                
+                return JsonResponse({
+                    'authenticated': True,
+                    'user': {
+                        'id': request.user.id,
+                        'username': request.user.username,
+                        'email': request.user.email,
+                        'first_name': request.user.first_name,
+                        'last_name': request.user.last_name,
+                        'is_authenticated': True
+                    },
+                    'access_token': str(access_token),
+                    'refresh_token': str(refresh)
+                })
+            except Exception as e:
+                return JsonResponse({
+                    'authenticated': False,
+                    'error': str(e)
+                })
+        else:
+            return JsonResponse({
+                'authenticated': False
+            })

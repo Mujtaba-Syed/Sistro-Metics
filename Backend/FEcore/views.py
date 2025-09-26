@@ -114,32 +114,29 @@ class AddToCartAPIView(View):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
 
+class GoogleOAuthStartView(View):
+    def get(self, request):
+        # Store the return URL in session before redirecting to Google OAuth
+        return_url = request.GET.get('return_url', '/')
+        request.session['return_url'] = return_url
+        
+        # Redirect to Django allauth Google OAuth
+        return redirect('/accounts/google/login/')
+
 class GoogleOAuthCallbackView(View):
     def get(self, request):
-        # This view handles the Google OAuth callback
-        # In a real implementation, you would:
-        # 1. Exchange the authorization code for tokens
-        # 2. Get user info from Google
-        # 3. Create or update user account
-        # 4. Generate your own session tokens
-        # 5. Redirect back to the frontend with tokens
+        # This view handles the Google OAuth callback after Django allauth processes it
+        # Django allauth will have already authenticated the user
         
-        code = request.GET.get('code')
-        state = request.GET.get('state')
+        # Get the return URL from session or default to home
+        return_url = request.session.get('return_url', '/')
         
-        if not code:
-            return redirect('/?error=oauth_failed')
-        
-        try:
-            state_data = json.loads(state) if state else {}
-            product_id = state_data.get('productId')
-            return_url = state_data.get('returnUrl', '/')
-            
-            # For now, just redirect back with success
-            # In real implementation, you'd process the OAuth flow here
-            redirect_url = f"{return_url}?oauth_success=true&product_id={product_id}"
+        # Check if user is authenticated (Django allauth should have done this)
+        if request.user.is_authenticated:
+            # Redirect back to the original page with success indicator
+            redirect_url = f"{return_url}?google_auth=success"
             return redirect(redirect_url)
-            
-        except Exception as e:
-            return redirect('/?error=oauth_processing_failed')
+        else:
+            # OAuth failed, redirect with error
+            return redirect(f"{return_url}?google_auth=error")
     

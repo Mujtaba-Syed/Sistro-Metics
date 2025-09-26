@@ -224,7 +224,7 @@
 										<a href="#" class="js-show-modal1" data-product-id="{{ product.id }}" style="background-color: #e83e8c; color: white; border: none; border-radius: 25px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; padding: 12px 20px; font-size: 12px; text-decoration: none; display: inline-block; min-width: 120px; text-align: center;">
 											Quick View
 										</a>
-										<button onclick="console.log('Add to cart clicked, addToCart available:', typeof addToCart); if(typeof addToCart === 'function') { addToCart({{ product.id }}); } else { console.error('addToCart function not available'); }" style="background-color: #28a745; color: white; border: none; border-radius: 25px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; padding: 12px 20px; font-size: 12px; cursor: pointer; display: inline-block; min-width: 120px;">
+										<button onclick="handleAddToCart({{ product.id }})" style="background-color: #28a745; color: white; border: none; border-radius: 25px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; padding: 12px 20px; font-size: 12px; cursor: pointer; display: inline-block; min-width: 120px;">
 											Add to Cart
 										</button>
 									</div>
@@ -580,7 +580,7 @@
 								<a href="#" class="js-show-modal1" data-product-id="{{ product.id }}" style="background-color: #e83e8c; color: white; border: none; border-radius: 25px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; padding: 12px 20px; font-size: 12px; text-decoration: none; display: inline-block; min-width: 120px; text-align: center;">
 									Quick View
 								</a>
-								<button onclick="console.log('Add to cart clicked, addToCart available:', typeof addToCart); if(typeof addToCart === 'function') { addToCart({{ product.id }}); } else { console.error('addToCart function not available'); }" style="background-color: #28a745; color: white; border: none; border-radius: 25px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; padding: 12px 20px; font-size: 12px; cursor: pointer; display: inline-block; min-width: 120px;">
+								<button onclick="handleAddToCart({{ product.id }})" style="background-color: #28a745; color: white; border: none; border-radius: 25px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; padding: 12px 20px; font-size: 12px; cursor: pointer; display: inline-block; min-width: 120px;">
 									Add to Cart
 								</button>
 							</div>
@@ -610,6 +610,7 @@
 {% include 'includes/back-to-top.html' %}
 
 {% include 'includes/quick-view-modal.html' %}
+{% include 'includes/login-view-modal.html' %}
 
 <!--===============================================================================================-->	
 	<script src="{% static 'vendor/jquery/jquery-3.2.1.min.js' %}"></script>
@@ -757,6 +758,25 @@
 		document.addEventListener('DOMContentLoaded', function() {
 			scrollNewArrivals('left'); // Initialize arrows
 		});
+		
+		// Function to handle Add to Cart click
+		function handleAddToCart(productId) {
+			console.log('Add to cart clicked for product:', productId);
+			
+			// Check if user is authenticated
+			if (isAuthenticated()) {
+				// User is logged in, proceed with adding to cart
+				if (typeof addToCart === 'function') {
+					addToCart(productId);
+				} else {
+					console.error('addToCart function not available');
+					showNotification('Error: Add to cart function not available', 'error');
+				}
+			} else {
+				// User is not logged in, show login modal
+				openLoginModal();
+			}
+		}
 	</script>
 	<script src="{% static 'js/main.js' %}"></script>
 	<script src="{% static 'js/cart.js' %}"></script>

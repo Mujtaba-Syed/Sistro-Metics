@@ -13,4 +13,7 @@ urlpatterns = [
     path('api/auth/login/', views.UserLoginView.as_view(), name='login'),
     path('api/auth/refresh/', views.TokenRefreshView.as_view(), name='refresh'),
     path('api/auth/logout/', views.UserLogoutView.as_view(), name='logout'),
+    
+    # Authentication check endpoint
+    path('check-auth/', views.CheckAuthView.as_view(), name='check-auth'),
 ]

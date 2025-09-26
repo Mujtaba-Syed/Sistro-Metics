@@ -16,5 +16,6 @@ urlpatterns = [
     
     # API endpoints
     path('api/add-to-cart/',AddToCartAPIView.as_view(),name='add-to-cart'),
+    path('oauth/google/start/',GoogleOAuthStartView.as_view(),name='google-oauth-start'),
     path('oauth/google/callback/',GoogleOAuthCallbackView.as_view(),name='google-oauth-callback'),
 ]

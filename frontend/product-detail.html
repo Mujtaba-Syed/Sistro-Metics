@@ -178,7 +178,7 @@
 										</div>
 									</div>
 
-									<button class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail">
+									<button class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04" onclick="handleAddToCart({{ product.id }})">
 										Add to cart
 									</button>
 								</div>
@@ -674,6 +674,7 @@
 
 
 	{% include 'includes/quick-view-modal.html' %}
+{% include 'includes/login-view-modal.html' %}
 	
 <!--===============================================================================================-->	
 	<script src="{% static 'vendor/jquery/jquery-3.2.1.min.js' %}"></script>
@@ -773,6 +774,25 @@
 				ps.update();
 			})
 		});
+		
+		// Function to handle Add to Cart click
+		function handleAddToCart(productId) {
+			console.log('Add to cart clicked for product:', productId);
+			
+			// Check if user is authenticated
+			if (isAuthenticated()) {
+				// User is logged in, proceed with adding to cart
+				if (typeof addToCart === 'function') {
+					addToCart(productId);
+				} else {
+					console.error('addToCart function not available');
+					showNotification('Error: Add to cart function not available', 'error');
+				}
+			} else {
+				// User is not logged in, show login modal
+				openLoginModal();
+			}
+		}
 	</script>
 <!--===============================================================================================-->
 	<script src="{% static 'js/main.js' %}"></script>
