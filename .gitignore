@@ -10,7 +10,7 @@ env/
 # Django stuff
 *.log
 db.sqlite3
-media/
+
 
 
 # Mac / Windows system files

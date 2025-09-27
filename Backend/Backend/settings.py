@@ -157,7 +157,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 # Media files (user uploads)
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR.parent, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Django Allauth Configuration
 SITE_ID = config('SITE_ID', default=1, cast=int)

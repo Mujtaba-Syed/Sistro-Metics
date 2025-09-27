@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAuthenticatedOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
-from django.db.models import Q, F
+from django.db.models import Q, F, Count
 from django.shortcuts import get_object_or_404
 from .models import BlogPost, BlogComment, BlogImage
 from .serializers import (
@@ -188,3 +188,33 @@ class BlogCategoryAPIView(generics.ListAPIView):
             is_active=True, 
             category__icontains=category
         ).select_related('author').prefetch_related('images')
+
+class BlogCategoriesListAPIView(generics.GenericAPIView):
+    """
+    API endpoint to get all unique categories with their post counts
+    """
+    permission_classes = [AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        # Get all unique categories with their post counts
+        categories = BlogPost.objects.filter(
+            is_active=True,
+            category__isnull=False
+        ).exclude(category='').values('category').annotate(
+            post_count=Count('id')
+        ).order_by('category')
+        
+        # Format the response
+        categories_data = [
+            {
+                'name': item['category'],
+                'post_count': item['post_count'],
+                'slug': item['category'].lower().replace(' ', '-')
+            }
+            for item in categories
+        ]
+        
+        return Response({
+            'categories': categories_data,
+            'total_categories': len(categories_data)
+        })

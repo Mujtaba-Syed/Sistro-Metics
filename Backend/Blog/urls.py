@@ -13,4 +13,5 @@ urlpatterns = [
     path('comments/like/', views.CommentLikeAPIView.as_view(), name='comment-like'),
     path('search/', views.BlogSearchAPIView.as_view(), name='blog-search'),
     path('category/<str:category>/', views.BlogCategoryAPIView.as_view(), name='blog-category'),
+    path('categories/', views.BlogCategoriesListAPIView.as_view(), name='blog-categories-list'),
 ]
