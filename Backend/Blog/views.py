@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404
 from .models import BlogPost, BlogComment, BlogImage
 from .serializers import (
     BlogPostListSerializer, BlogPostDetailSerializer, BlogPostCreateSerializer,
-    BlogCommentSerializer, CommentCreateSerializer, CommentLikeSerializer
+    BlogCommentSerializer, CommentCreateSerializer, AnonymousCommentCreateSerializer, CommentLikeSerializer
 )
 
 class StandardResultsSetPagination(PageNumberPagination):
@@ -83,11 +83,11 @@ class BlogCommentViewSet(viewsets.ModelViewSet):
     filterset_fields = ['blog', 'user']
     ordering_fields = ['created_at', 'updated_at']
     ordering = ['-created_at']
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [AllowAny]
 
     def get_serializer_class(self):
         if self.action in ['create']:
-            return CommentCreateSerializer
+            return AnonymousCommentCreateSerializer
         return BlogCommentSerializer
 
     def perform_create(self, serializer):

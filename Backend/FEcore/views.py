@@ -52,8 +52,12 @@ class AboutView(View): #done
     
     
 class BlogDetailView(View): #done
-    def get(self,request):
-        return render(request,'blog-detail.html')
+    def get(self, request, blog_id):
+        # Pass the blog_id to the template context for JavaScript to use
+        context = {
+            'blog_id': blog_id
+        }
+        return render(request, 'blog-detail.html', context)
     
 
     

@@ -56,6 +56,37 @@ class CommentCreateSerializer(serializers.ModelSerializer):
         model = BlogComment
         fields = ['blog', 'user', 'comment']
 
+class AnonymousCommentCreateSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(max_length=150, write_only=True)
+    email = serializers.EmailField(write_only=True)
+    
+    class Meta:
+        model = BlogComment
+        fields = ['blog', 'comment', 'name', 'email']
+        read_only_fields = ['id', 'user', 'is_active', 'created_at', 'updated_at']
+    
+    def create(self, validated_data):
+        # Extract name and email
+        name = validated_data.pop('name')
+        email = validated_data.pop('email')
+        
+        # Create or get a user for anonymous comments
+        # We'll create a user with the provided name and email
+        user, created = User.objects.get_or_create(
+            username=f"anonymous_{email}",
+            defaults={
+                'first_name': name.split(' ')[0] if ' ' in name else name,
+                'last_name': name.split(' ')[1] if ' ' in name else '',
+                'email': email,
+                'is_active': False  # Mark as inactive since it's anonymous
+            }
+        )
+        
+        # Add user to validated_data
+        validated_data['user'] = user
+        
+        return super().create(validated_data)
+
 class CommentLikeSerializer(serializers.Serializer):
     comment_id = serializers.IntegerField()
     action = serializers.ChoiceField(choices=['like', 'unlike'])

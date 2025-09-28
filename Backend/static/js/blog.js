@@ -1,13 +1,15 @@
 // Blog functionality for blog.html
 class BlogManager {
     constructor() {
-        this.apiUrl = 'http://127.0.0.1:8000/blog/posts';
-        this.categoriesUrl = 'http://127.0.0.1:8000/blog/categories/';
+        this.apiUrl = `${window.BASE_URL || 'http://127.0.0.1:8000/'}blog/posts`;
+        this.categoriesUrl = `${window.BASE_URL || 'http://127.0.0.1:8000/'}blog/categories/`;
+        this.productsUrl = `${window.BASE_URL || 'http://127.0.0.1:8000/'}product/products/?is_featured=true`;
         this.currentPage = 1;
         this.currentCategory = null;
         this.blogContainer = document.querySelector('.blog-content-container');
         this.paginationContainer = document.querySelector('.pagination-container');
         this.categoriesContainer = document.querySelector('.categories-list');
+        this.featuredProductsContainer = document.querySelector('.featured-products-list');
         
         this.init();
     }
@@ -16,7 +18,8 @@ class BlogManager {
         try {
             await Promise.all([
                 this.loadBlogPosts(),
-                this.loadCategories()
+                this.loadCategories(),
+                this.loadFeaturedProducts()
             ]);
         } catch (error) {
             console.error('Error initializing blog:', error);
@@ -54,6 +57,19 @@ class BlogManager {
             this.renderCategories(data.categories);
         } catch (error) {
             console.error('Error loading categories:', error);
+        }
+    }
+
+    async loadFeaturedProducts() {
+        try {
+            const response = await fetch(this.productsUrl);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            this.renderFeaturedProducts(data.results || data);
+        } catch (error) {
+            console.error('Error loading featured products:', error);
         }
     }
 
@@ -97,7 +113,7 @@ class BlogManager {
         const tags = post.tags ? post.tags.split(',').slice(0, 3).join(', ') : 'General';
 
         blogDiv.innerHTML = `
-            <a href="/blog-detail/${post.slug}/" class="hov-img0 how-pos5-parent">
+            <a href="/blog-detail/${post.id}/" class="hov-img0 how-pos5-parent">
                 <img src="${imageUrl}" alt="${imageAlt}">
                 <div class="flex-col-c-m size-123 bg9 how-pos5">
                     <span class="ltext-107 cl2 txt-center">
@@ -111,7 +127,7 @@ class BlogManager {
 
             <div class="p-t-32">
                 <h4 class="p-b-15">
-                    <a href="/blog-detail/${post.slug}/" class="ltext-108 cl2 hov-cl1 trans-04">
+                    <a href="/blog-detail/${post.id}/" class="ltext-108 cl2 hov-cl1 trans-04">
                         ${post.title}
                     </a>
                 </h4>
@@ -135,7 +151,7 @@ class BlogManager {
                         </span>
                     </span>
 
-                    <a href="/blog-detail/${post.slug}/" class="stext-101 cl2 hov-cl1 trans-04 m-tb-10">
+                    <a href="/blog-detail/${post.id}/" class="stext-101 cl2 hov-cl1 trans-04 m-tb-10">
                         Continue Reading
                         <i class="fa fa-long-arrow-right m-l-9"></i>
                     </a>
@@ -185,6 +201,66 @@ class BlogManager {
                 this.filterByCategory(category);
             });
         });
+    }
+
+    renderFeaturedProducts(products) {
+        if (!this.featuredProductsContainer) {
+            console.error('Featured products container not found');
+            return;
+        }
+
+        // Clear existing products
+        this.featuredProductsContainer.innerHTML = '';
+
+        if (products.length === 0) {
+            this.featuredProductsContainer.innerHTML = '<p class="text-center">No featured products available.</p>';
+            return;
+        }
+
+        // Limit to 3 products for the sidebar
+        const limitedProducts = products.slice(0, 3);
+
+        limitedProducts.forEach(product => {
+            const productElement = this.createFeaturedProductElement(product);
+            this.featuredProductsContainer.appendChild(productElement);
+        });
+    }
+
+    createFeaturedProductElement(product) {
+        const productLi = document.createElement('li');
+        productLi.className = 'flex-w flex-t p-b-30';
+
+        // Get the first image or fallback
+        const mainImage = product.images && product.images.length > 0 
+            ? product.images.find(img => img.order === 0) || product.images[0]
+            : null;
+        
+        const imageUrl = mainImage ? mainImage.image : '/static/images/product-min-01.jpg';
+        const imageAlt = mainImage ? mainImage.alt_text : product.name;
+
+        // Calculate price (use discounted price if on sale)
+        const displayPrice = product.is_on_sale && product.discounted_price 
+            ? product.discounted_price 
+            : product.price;
+
+        productLi.innerHTML = `
+            <a href="/product-detail/${product.id}/" class="wrao-pic-w size-214 hov-ovelay1 m-r-20">
+                <img src="${imageUrl}" alt="${imageAlt}" style="width: 80px; height: 80px; object-fit: cover;">
+            </a>
+
+            <div class="size-215 flex-col-t p-t-8">
+                <a href="/product-detail/${product.id}/" class="stext-116 cl8 hov-cl1 trans-04">
+                    ${product.name}
+                </a>
+
+                <span class="stext-116 cl6 p-t-20">
+                    $${parseFloat(displayPrice).toFixed(2)}
+                    ${product.is_on_sale ? `<span class="stext-117 cl3" style="text-decoration: line-through; margin-left: 5px;">$${parseFloat(product.price).toFixed(2)}</span>` : ''}
+                </span>
+            </div>
+        `;
+
+        return productLi;
     }
 
     filterByCategory(category) {
