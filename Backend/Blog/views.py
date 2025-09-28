@@ -13,9 +13,14 @@ from .serializers import (
 )
 
 class StandardResultsSetPagination(PageNumberPagination):
-    page_size = 10
+    page_size = 4  # Back to normal page size
     page_size_query_param = 'page_size'
     max_page_size = 100
+    
+    def get_paginated_response(self, data):
+        response = super().get_paginated_response(data)
+        response.data['page_size'] = self.page_size
+        return response
 
 class BlogPostViewSet(viewsets.ModelViewSet):
     queryset = BlogPost.objects.filter(is_active=True).select_related('author').prefetch_related('images', 'comments')

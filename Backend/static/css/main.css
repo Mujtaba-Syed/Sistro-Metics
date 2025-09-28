@@ -2870,7 +2870,7 @@ input.num-product::-webkit-inner-spin-button {
 .how-pagination1 {
   font-family: Poppins-Regular;
   font-size: 14px;
-  color: #808080;
+  color: #e83e8c;
 
   width: 36px;
   height: 36px;
@@ -2879,14 +2879,14 @@ input.num-product::-webkit-inner-spin-button {
 }
 
 .how-pagination1:hover {
-  background-color: #999;
-  border-color: #999;
+  background-color: #e83e8c;
+  border-color: #e83e8c;
   color: #fff;
 }
 
 .active-pagination1 {
-  background-color: #999;
-  border-color: #999;
+  background-color: #e83e8c;
+  border-color: #e83e8c;
   color: #fff;
 }
 

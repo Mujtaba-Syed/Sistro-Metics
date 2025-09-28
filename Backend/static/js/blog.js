@@ -11,6 +11,13 @@ class BlogManager {
         this.categoriesContainer = document.querySelector('.categories-list');
         this.featuredProductsContainer = document.querySelector('.featured-products-list');
         
+        console.log('BlogManager initialized:', {
+            blogContainer: !!this.blogContainer,
+            paginationContainer: !!this.paginationContainer,
+            categoriesContainer: !!this.categoriesContainer,
+            featuredProductsContainer: !!this.featuredProductsContainer
+        });
+        
         this.init();
     }
 
@@ -34,11 +41,13 @@ class BlogManager {
                 url += `&category=${encodeURIComponent(this.currentCategory)}`;
             }
             
+            console.log('Loading blog posts from URL:', url);
             const response = await fetch(url);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
+            console.log('API Response data:', data);
             this.renderBlogPosts(data.results);
             this.renderPagination(data);
         } catch (error) {
@@ -285,15 +294,42 @@ class BlogManager {
             return;
         }
 
-        const totalPages = Math.ceil(data.count / 10); // Assuming 10 posts per page
+        // Use the actual page size from the API response, fallback to 10
+        const pageSize = data.page_size || 10;
+        const totalPages = Math.ceil(data.count / pageSize);
+        
+        console.log('Pagination debug:', {
+            count: data.count,
+            pageSize: pageSize,
+            totalPages: totalPages,
+            currentPage: this.currentPage,
+            apiData: data
+        });
+        
         if (totalPages <= 1) {
             this.paginationContainer.innerHTML = '';
             return;
         }
 
-        let paginationHTML = '<div class="flex-l-m flex-w w-full p-t-10 m-lr--7">';
+        // Always show at least page 1 for testing
+        const pagesToShow = Math.max(totalPages, 1);
+        
+        let paginationHTML = `
+            <div class="flex-c-m flex-w w-full p-t-20">
+                <div class="flex-c-m flex-w w-full">
+        `;
 
-        for (let i = 1; i <= totalPages; i++) {
+        // Add Previous button if not on first page
+        if (this.currentPage > 1) {
+            paginationHTML += `
+                <a href="#" class="flex-c-m how-pagination1 trans-04 m-all-7" data-page="${this.currentPage - 1}">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+            `;
+        }
+
+        // Add page numbers
+        for (let i = 1; i <= pagesToShow; i++) {
             const activeClass = i === this.currentPage ? 'active-pagination1' : '';
             paginationHTML += `
                 <a href="#" class="flex-c-m how-pagination1 trans-04 m-all-7 ${activeClass}" data-page="${i}">
@@ -302,8 +338,28 @@ class BlogManager {
             `;
         }
 
-        paginationHTML += '</div>';
+        // Add Next button if not on last page
+        if (this.currentPage < pagesToShow) {
+            paginationHTML += `
+                <a href="#" class="flex-c-m how-pagination1 trans-04 m-all-7" data-page="${this.currentPage + 1}">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            `;
+        }
+
+        paginationHTML += `
+                </div>
+                <div class="flex-c-m w-full p-t-10">
+                    <span class="stext-107 cl6">
+                        Showing ${((this.currentPage - 1) * pageSize) + 1} to ${Math.min(this.currentPage * pageSize, data.count)} of ${data.count} blog posts
+                    </span>
+                </div>
+            </div>
+        `;
+        
         this.paginationContainer.innerHTML = paginationHTML;
+        
+        console.log('Pagination HTML generated:', paginationHTML);
 
         // Add event listeners to pagination links
         this.paginationContainer.querySelectorAll('a[data-page]').forEach(link => {
