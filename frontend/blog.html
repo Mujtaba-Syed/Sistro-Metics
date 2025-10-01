@@ -276,6 +276,11 @@
 		});
 	</script>
 <!--===============================================================================================-->
+	<script>
+		// Pass API URL and CSRF token from Django to JavaScript
+		window.BASE_URL = '{{ base_url }}';
+		window.CSRF_TOKEN = '{{ csrf_token }}';
+	</script>
 	<script src="{% static 'js/main.js' %}"></script>
 	<script src="{% static 'js/blog.js' %}"></script>
 

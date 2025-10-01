@@ -3441,3 +3441,149 @@ input.num-product::-webkit-inner-spin-button {
   background-color: #f8f9fa;
   border-radius: 4px;
 }
+
+
+
+/* BLOG styling start  */
+.sec-blog {
+  background-color: #f8f9fa;
+}
+
+.blog-posts-container {
+  display: flex;
+  gap: 30px;
+}
+
+.blog-posts-container .p-b-63 {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.blog-posts-container .p-b-63:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+}
+
+.blog-posts-container .hov-img0 {
+  position: relative;
+  overflow: hidden;
+}
+
+.blog-posts-container .hov-img0 img {
+  transition: transform 0.3s ease;
+}
+
+.blog-posts-container .hov-img0:hover img {
+  transform: scale(1.05);
+}
+
+.blog-posts-container .how-pos5 {
+  background: linear-gradient(135deg, #e83e8c, #ff6b9d);
+}
+
+.blog-posts-container .ltext-108 {
+  color: #333;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.blog-posts-container .ltext-108:hover {
+  color: #e83e8c;
+}
+
+.blog-posts-container .stext-117 {
+  color: #666;
+  line-height: 1.6;
+}
+
+.blog-posts-container .stext-101 {
+  color: #e83e8c;
+  font-weight: 600;
+}
+
+.blog-posts-container .stext-101:hover {
+  color: #c72d6b;
+}
+
+.blog-categories-list li {
+  border: 1px solid #e0e0e0;
+  margin-bottom: 8px;
+  border-radius: 4px;
+}
+
+.blog-categories-list li:hover {
+  border-color: #e83e8c;
+}
+
+.blog-categories-list a {
+  display: block;
+  padding: 12px 16px;
+  text-decoration: none;
+  color: #666;
+  transition: all 0.3s ease;
+}
+
+.blog-categories-list a:hover {
+  color: #e83e8c;
+  background-color: #f8f9fa;
+}
+
+.blog-featured-products-list li {
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+}
+
+.blog-featured-products-list li:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.blog-featured-products-list .wrao-pic-w {
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.blog-featured-products-list .wrao-pic-w:hover img {
+  transform: scale(1.1);
+}
+
+.blog-featured-products-list .wrao-pic-w img {
+  transition: transform 0.3s ease;
+}
+
+.blog-featured-products-list .stext-116 {
+  color: #333;
+  font-weight: 500;
+}
+
+.blog-featured-products-list .stext-116:hover {
+  color: #e83e8c;
+}
+
+.blog-featured-products-list .stext-116.cl6 {
+  color: #e83e8c;
+  font-weight: 600;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .blog-posts-container {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .sec-blog .row {
+    flex-direction: column-reverse;
+  }
+  
+  .sec-blog .col-md-8 {
+    margin-top: 30px;
+  }
+}
+
+
+/* Blog styling end   */

@@ -10,12 +10,13 @@ import os
 import json
 import secrets
 import string
+from decouple import config
 
 # Create your views here.
 class HomeView(View): #done
     def get(self,request):
         # Get API URL from environment or use default
-        api_url = os.environ.get('BASE_URL', 'http://127.0.0.1:8000')
+        api_url = config('BASE_URL', default='http://127.0.0.1:8000')
         
         # Fetch new arrival products
         new_arrivals = Product.objects.filter(is_active=True, is_new=True).select_related('category').prefetch_related('images').order_by('-created_at')[:8]
@@ -40,7 +41,13 @@ class Home3View(View): #done
 
 class BlogView(View): #done
     def get(self,request):
-        return render(request,'blog.html')
+        # Get API URL from environment or use default
+        api_url = config('BASE_URL', default='http://127.0.0.1:8000')
+        
+        context = {
+            'base_url': api_url,
+        }
+        return render(request,'blog.html', context)
     
 class ContactView(View): #done
     def get(self,request):
@@ -132,14 +139,20 @@ class ProductDetailView(View): #done
             return render(request, 'product-detail.html', context)
 
 class CartView(View): #done
-    def get(self,request):  
-        return render(request,'shoping-cart.html')
+    def get(self,request):
+        # Get API URL from environment or use default
+        api_url = config('BASE_URL', default='http://127.0.0.1:8000')
+        
+        context = {
+            'base_url': api_url,
+        }
+        return render(request,'shoping-cart.html', context)
     
     
 class ProductView(View): #done
     def get(self,request):
         # Get API URL from environment or use default
-        api_url = os.environ.get('BASE_URL', 'http://127.0.0.1:8000')
+        api_url = config('BASE_URL', default='http://127.0.0.1:8000')
         
         # Fetch all active products with related data
         products = Product.objects.filter(is_active=True).select_related('category').prefetch_related('images').order_by('-created_at')

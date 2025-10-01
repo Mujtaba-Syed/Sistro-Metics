@@ -1,7 +1,7 @@
 // Product.js - Simplified product functionality
 
 // Configuration
-const API_BASE_URL = 'http://localhost:8000'; // Update this to your actual backend URL
+const API_BASE_URL = window.BASE_URL || 'http://127.0.0.1:8000';
 
 // Global variables
 let allProducts = [];
