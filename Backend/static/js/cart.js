@@ -9,12 +9,80 @@ const CART_API_BASE = `${API_BASE_URL}/cart/`;
 console.log('API_BASE_URL:', API_BASE_URL);
 console.log('CART_API_BASE:', CART_API_BASE);
 
+// Helper function to check if user is authenticated
+function isUserAuthenticated() {
+    try {
+        const authTokens = sessionStorage.getItem('authTokens');
+        if (authTokens) {
+            const tokens = JSON.parse(authTokens);
+            return !!(tokens.accessToken && tokens.user);
+        }
+    } catch (error) {
+        console.error('Error checking authentication:', error);
+    }
+    return false;
+}
+
+// Helper function to show login modal when authentication is required
+function showLoginModalIfNeeded() {
+    if (!isUserAuthenticated()) {
+        console.log('User not authenticated, showing login modal');
+        if (typeof openLoginModal === 'function') {
+            openLoginModal();
+        } else {
+            console.error('openLoginModal function not found');
+        }
+        return true; // Return true if modal was shown
+    }
+    return false; // Return false if user is authenticated
+}
+
+// Helper function to get headers with authentication
+function getAuthenticatedHeaders() {
+    const headers = {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCSRFToken(),
+    };
+    
+    const accessToken = getAccessToken();
+    if (!accessToken) {
+        return null; // Return null if no token
+    }
+    headers['Authorization'] = `Bearer ${accessToken}`;
+    return headers;
+}
+
+// Helper function to handle authentication errors
+function handleAuthError(response) {
+    if (response.status === 401) {
+        console.log('Unauthorized response, showing login modal');
+        showLoginModalIfNeeded();
+        return true; // Return true if auth error was handled
+    }
+    return false; // Return false if no auth error
+}
+
+// Helper function to get access token from session storage
+function getAccessToken() {
+    try {
+        const authTokens = sessionStorage.getItem('authTokens');
+        if (authTokens) {
+            const tokens = JSON.parse(authTokens);
+            return tokens.accessToken || '';
+        }
+    } catch (error) {
+        console.error('Error parsing auth tokens:', error);
+    }
+    return '';
+}
+
 // CSRF Token helper
 function getCSRFToken() {
     return window.CSRF_TOKEN || document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
 }
 
 console.log('CSRF Token available:', !!getCSRFToken());
+console.log('Access Token available:', !!getAccessToken());
 
 // Initialize cart when page loads
 document.addEventListener('DOMContentLoaded', function() {
@@ -34,7 +102,22 @@ document.addEventListener('DOMContentLoaded', function() {
 // Load cart items from API
 async function loadCartItems() {
     try {
-        const response = await fetch(`${CART_API_BASE}get_items/`);
+        const headers = getAuthenticatedHeaders();
+        if (!headers) {
+            console.log('No access token found, showing login modal');
+            showLoginModalIfNeeded();
+            return;
+        }
+        
+        const response = await fetch(`${CART_API_BASE}get_items/`, {
+            method: 'GET',
+            headers: headers
+        });
+        
+        if (handleAuthError(response)) {
+            return;
+        }
+        
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -56,6 +139,7 @@ async function loadCartItems() {
         }
         
         displayCartItems(items);
+        updateCartSummary(); // Update cart summary with coupon info
     } catch (error) {
         console.error('Error loading cart items:', error);
         showEmptyCart();
@@ -178,15 +262,16 @@ function showEmptyCart() {
     tableBody.innerHTML = `
         <tr class="table_row">
             <td colspan="6" class="text-center p-t-50 p-b-50">
-                <h3 class="stext-104 cl2">Your cart is empty</h3>
-                <p class="stext-105 cl3">Add some products to get started!</p>
-                <a href="/" class="btn btn-primary">Continue Shopping</a>
+                <h3 class="stext-104 cl2 mb-2">Your cart is empty</h3>
+                <p class="stext-105 cl3 mb-2">Add some products to get started!</p>
+                <a href="/" style="text-decoration: none; color: #e83e8c !important;">Continue Shopping</a>
             </td>
         </tr>
     `;
 
     // Update totals to show zero
     updateCartTotals([]);
+    updateCartSummary(); // Ensure cart summary is updated
 }
 
 // Update cart totals
@@ -195,20 +280,14 @@ function updateCartTotals(items) {
         return sum + (parseFloat(item.product.price) * item.quantity);
     }, 0);
 
-    const shipping = 0; // Free shipping for now
-    const total = subtotal + shipping;
-
     // Update subtotal
-    const subtotalElement = document.querySelector('.mtext-110.cl2');
+    const subtotalElement = document.getElementById('cart-subtotal');
     if (subtotalElement) {
         subtotalElement.textContent = `Rs ${subtotal.toFixed(2)}`;
     }
 
-    // Update total
-    const totalElement = document.querySelector('.mtext-110.cl2:last-of-type');
-    if (totalElement) {
-        totalElement.textContent = `Rs ${total.toFixed(2)}`;
-    }
+    // Update total - use cart summary API for accurate calculation with coupons
+    updateCartSummary();
 }
 
 // Setup event listeners
@@ -254,21 +333,36 @@ function setupEventListeners() {
             clearCart();
         }
     });
+    
+    // Setup coupon event listeners
+    setupCouponEventListeners();
 }
 
 // Increase item quantity
 async function increaseQuantity(productId) {
+    // Check authentication first
+    if (showLoginModalIfNeeded()) {
+        return;
+    }
+    
     try {
+        const headers = getAuthenticatedHeaders();
+        if (!headers) {
+            showLoginModalIfNeeded();
+            return;
+        }
+        
         const response = await fetch(`${CART_API_BASE}increase_item/`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCSRFToken(),
-            },
+            headers: headers,
             body: JSON.stringify({
                 product_id: productId
             })
         });
+
+        if (handleAuthError(response)) {
+            return;
+        }
 
         const data = await response.json();
         if (data.success) {
@@ -286,17 +380,29 @@ async function increaseQuantity(productId) {
 
 // Decrease item quantity
 async function decreaseQuantity(productId) {
+    // Check authentication first
+    if (showLoginModalIfNeeded()) {
+        return;
+    }
+    
     try {
+        const headers = getAuthenticatedHeaders();
+        if (!headers) {
+            showLoginModalIfNeeded();
+            return;
+        }
+        
         const response = await fetch(`${CART_API_BASE}remove_item/`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCSRFToken(),
-            },
+            headers: headers,
             body: JSON.stringify({
                 product_id: productId
             })
         });
+
+        if (handleAuthError(response)) {
+            return;
+        }
 
         const data = await response.json();
         if (data.success) {
@@ -314,31 +420,44 @@ async function decreaseQuantity(productId) {
 
 // Update item quantity
 async function updateQuantity(productId, quantity) {
+    // Check authentication first
+    if (showLoginModalIfNeeded()) {
+        return;
+    }
+    
     try {
+        const headers = getAuthenticatedHeaders();
+        if (!headers) {
+            showLoginModalIfNeeded();
+            return;
+        }
+        
         // First remove the item
-        await fetch(`${CART_API_BASE}remove_item/`, {
+        const removeResponse = await fetch(`${CART_API_BASE}remove_item/`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCSRFToken(),
-            },
+            headers: headers,
             body: JSON.stringify({
                 product_id: productId
             })
         });
+        
+        if (handleAuthError(removeResponse)) {
+            return;
+        }
 
         // Then add it back with the new quantity
         const response = await fetch(`${CART_API_BASE}add_item/`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCSRFToken(),
-            },
+            headers: headers,
             body: JSON.stringify({
                 product_id: productId,
                 quantity: quantity
             })
         });
+        
+        if (handleAuthError(response)) {
+            return;
+        }
 
         const data = await response.json();
         if (data.success) {
@@ -356,21 +475,33 @@ async function updateQuantity(productId, quantity) {
 
 // Remove item from cart
 async function removeItemFromCart(productId) {
+    // Check authentication first
+    if (showLoginModalIfNeeded()) {
+        return;
+    }
+    
     if (!confirm('Are you sure you want to remove this item from your cart?')) {
         return;
     }
 
     try {
+        const headers = getAuthenticatedHeaders();
+        if (!headers) {
+            showLoginModalIfNeeded();
+            return;
+        }
+        
         const response = await fetch(`${CART_API_BASE}remove_item/`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCSRFToken(),
-            },
+            headers: headers,
             body: JSON.stringify({
                 product_id: productId
             })
         });
+        
+        if (handleAuthError(response)) {
+            return;
+        }
 
         const data = await response.json();
         if (data.success) {
@@ -388,18 +519,30 @@ async function removeItemFromCart(productId) {
 
 // Clear entire cart
 async function clearCart() {
+    // Check authentication first
+    if (showLoginModalIfNeeded()) {
+        return;
+    }
+    
     if (!confirm('Are you sure you want to clear your entire cart?')) {
         return;
     }
 
     try {
+        const headers = getAuthenticatedHeaders();
+        if (!headers) {
+            showLoginModalIfNeeded();
+            return;
+        }
+        
         const response = await fetch(`${CART_API_BASE}clear_cart/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCSRFToken(),
-            }
+            method: 'DELETE',
+            headers: headers
         });
+        
+        if (handleAuthError(response)) {
+            return;
+        }
 
         const data = await response.json();
         if (data.success) {
@@ -417,18 +560,30 @@ async function clearCart() {
 
 // Add item to cart (for use by other scripts)
 async function addToCart(productId, quantity = 1) {
+    // Check authentication first
+    if (showLoginModalIfNeeded()) {
+        return false;
+    }
+    
     try {
+        const headers = getAuthenticatedHeaders();
+        if (!headers) {
+            showLoginModalIfNeeded();
+            return false;
+        }
+        
         const response = await fetch(`${CART_API_BASE}add_item/`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCSRFToken(),
-            },
+            headers: headers,
             body: JSON.stringify({
                 product_id: productId,
                 quantity: quantity
             })
         });
+        
+        if (handleAuthError(response)) {
+            return false;
+        }
 
         const data = await response.json();
         if (data.success) {
@@ -453,7 +608,20 @@ async function addToCart(productId, quantity = 1) {
 // Get cart item count
 async function getCartItemCount() {
     try {
-        const response = await fetch(`${CART_API_BASE}get_items/`);
+        const headers = getAuthenticatedHeaders();
+        if (!headers) {
+            return 0; // Return 0 if no token
+        }
+        
+        const response = await fetch(`${CART_API_BASE}get_items/`, {
+            method: 'GET',
+            headers: headers
+        });
+        
+        if (handleAuthError(response)) {
+            return 0;
+        }
+        
         if (!response.ok) {
             return 0;
         }
@@ -536,7 +704,22 @@ function initializeCartModal() {
 // Load cart items for the modal
 async function loadCartModalItems() {
     try {
-        const response = await fetch(`${CART_API_BASE}get_items/`);
+        const headers = getAuthenticatedHeaders();
+        if (!headers) {
+            showEmptyCartModal();
+            return;
+        }
+        
+        const response = await fetch(`${CART_API_BASE}get_items/`, {
+            method: 'GET',
+            headers: headers
+        });
+        
+        if (handleAuthError(response)) {
+            showEmptyCartModal();
+            return;
+        }
+        
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -711,6 +894,167 @@ function showNotification(message, type = 'info') {
     }, 3000);
 }
 
+// Coupon functionality
+const COUPON_API_BASE = `${API_BASE_URL}/coupon/`;
+
+// Apply coupon
+async function applyCoupon() {
+    const couponInput = document.getElementById('coupon-input');
+    const couponCode = couponInput.value.trim().toUpperCase();
+    
+    if (!couponCode) {
+        showNotification('Please enter a coupon code', 'error');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${COUPON_API_BASE}apply/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken(),
+                'Authorization': `Bearer ${getAccessToken()}`
+            },
+            body: JSON.stringify({ code: couponCode })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showNotification(data.message, 'success');
+            couponInput.value = '';
+            updateCartSummary();
+            updateCouponDisplay(data.data);
+        } else {
+            showNotification(data.message, 'error');
+        }
+    } catch (error) {
+        console.error('Error applying coupon:', error);
+        showNotification('Failed to apply coupon. Please try again.', 'error');
+    }
+}
+
+// Remove coupon
+async function removeCoupon() {
+    const appliedCouponCode = document.getElementById('applied-coupon-code').textContent;
+    
+    if (!appliedCouponCode) {
+        showNotification('No coupon applied', 'error');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${COUPON_API_BASE}remove/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken(),
+                'Authorization': `Bearer ${getAccessToken()}`
+            },
+            body: JSON.stringify({ code: appliedCouponCode })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showNotification(data.message, 'success');
+            hideCouponDisplay();
+            updateCartSummary();
+        } else {
+            showNotification(data.message, 'error');
+        }
+    } catch (error) {
+        console.error('Error removing coupon:', error);
+        showNotification('Failed to remove coupon. Please try again.', 'error');
+    }
+}
+
+// Update coupon display
+function updateCouponDisplay(couponData) {
+    document.getElementById('applied-coupon-code').textContent = couponData.code;
+    document.getElementById('discount-amount').textContent = `Rs ${couponData.discount_amount}`;
+    document.getElementById('applied-coupon-section').style.display = 'flex';
+    document.getElementById('remove-coupon-section').style.display = 'flex';
+}
+
+// Hide coupon display
+function hideCouponDisplay() {
+    document.getElementById('applied-coupon-section').style.display = 'none';
+    document.getElementById('remove-coupon-section').style.display = 'none';
+}
+
+// Update cart summary with coupon info
+async function updateCartSummary() {
+    try {
+        const headers = getAuthenticatedHeaders();
+        if (!headers) {
+            return; // Return early if no token
+        }
+        
+        const response = await fetch(`${CART_API_BASE}summary/`, {
+            method: 'GET',
+            headers: headers
+        });
+        
+        if (handleAuthError(response)) {
+            return;
+        }
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            const summary = data.data;
+            
+            // Update subtotal
+            const subtotalElement = document.getElementById('cart-subtotal');
+            if (subtotalElement) {
+                subtotalElement.textContent = `Rs ${summary.cart_total}`;
+            }
+            
+            // Update total
+            const totalElement = document.getElementById('cart-total');
+            if (totalElement) {
+                totalElement.textContent = `Rs ${summary.final_amount}`;
+            }
+            
+            // Update coupon display if applied
+            if (summary.applied_coupon) {
+                document.getElementById('applied-coupon-code').textContent = summary.applied_coupon.code;
+                document.getElementById('discount-amount').textContent = `Rs ${summary.discount_amount}`;
+                document.getElementById('applied-coupon-section').style.display = 'flex';
+                document.getElementById('remove-coupon-section').style.display = 'flex';
+            } else {
+                hideCouponDisplay();
+            }
+        }
+    } catch (error) {
+        console.error('Error updating cart summary:', error);
+    }
+}
+
+// Setup coupon event listeners
+function setupCouponEventListeners() {
+    const applyCouponBtn = document.getElementById('apply-coupon-btn');
+    const removeCouponBtn = document.getElementById('remove-coupon-btn');
+    const couponInput = document.getElementById('coupon-input');
+    
+    if (applyCouponBtn) {
+        applyCouponBtn.addEventListener('click', applyCoupon);
+    }
+    
+    if (removeCouponBtn) {
+        removeCouponBtn.addEventListener('click', removeCoupon);
+    }
+    
+    if (couponInput) {
+        couponInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                applyCoupon();
+            }
+        });
+    }
+}
+
 // Export functions for global access
 window.addToCart = addToCart;
 window.getCartItemCount = getCartItemCount;
@@ -726,10 +1070,23 @@ window.clearCart = clearCart;
 window.loadCartModalItems = loadCartModalItems;
 window.displayCartModalItems = displayCartModalItems;
 window.updateCartModalTotal = updateCartModalTotal;
+window.applyCoupon = applyCoupon;
+window.removeCoupon = removeCoupon;
+window.updateCartSummary = updateCartSummary;
+window.isUserAuthenticated = isUserAuthenticated;
+window.showLoginModalIfNeeded = showLoginModalIfNeeded;
+window.getAccessToken = getAccessToken;
+window.getAuthenticatedHeaders = getAuthenticatedHeaders;
+window.handleAuthError = handleAuthError;
 
 console.log('Cart functions exported to window:', {
     addToCart: typeof window.addToCart,
     getCartItemCount: typeof window.getCartItemCount,
     updateCartCount: typeof window.updateCartCount,
-    showNotification: typeof window.showNotification
+    showNotification: typeof window.showNotification,
+    isUserAuthenticated: typeof window.isUserAuthenticated,
+    showLoginModalIfNeeded: typeof window.showLoginModalIfNeeded,
+    getAccessToken: typeof window.getAccessToken,
+    getAuthenticatedHeaders: typeof window.getAuthenticatedHeaders,
+    handleAuthError: typeof window.handleAuthError
 });

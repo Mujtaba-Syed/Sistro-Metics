@@ -16,4 +16,7 @@ urlpatterns = [
     
     # Authentication check endpoint
     path('check-auth/', views.CheckAuthView.as_view(), name='check-auth'),
+    
+    # Guest token endpoint
+    path('guest-tokens/', views.GuestTokenView.as_view(), name='guest-tokens'),
 ]

@@ -9,6 +9,7 @@ from django.http import JsonResponse
 from .models import UserProfile
 from .serializers import UserProfileSerializer, UserRegistrationSerializer, UserLoginSerializer
 import json
+import time
 
 class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = UserProfile.objects.all()
@@ -219,3 +220,62 @@ class CheckAuthView(APIView):
             return JsonResponse({
                 'authenticated': False
             })
+
+class GuestTokenView(APIView):
+    """
+    Generate JWT tokens for guest users
+    POST /user-auth/guest-tokens/
+    """
+    permission_classes = [AllowAny]
+    
+    def post(self, request):
+        try:
+            # Create a temporary guest user or use a special guest user
+            # For simplicity, we'll create a guest user with a unique identifier
+            guest_id = f"guest_{request.data.get('guest_id', int(time.time() * 1000))}"
+            
+            # Create or get a guest user
+            guest_user, created = User.objects.get_or_create(
+                username=guest_id,
+                defaults={
+                    'email': f'{guest_id}@guest.local',
+                    'first_name': 'Guest',
+                    'last_name': 'User',
+                    'is_active': True
+                }
+            )
+            
+            # Generate JWT tokens for the guest user
+            refresh = RefreshToken.for_user(guest_user)
+            access_token = refresh.access_token
+            
+            # Add custom claims to identify this as a guest token
+            access_token['is_guest'] = True
+            access_token['guest_id'] = guest_id
+            
+            return Response({
+                'success': True,
+                'message': 'Guest tokens generated successfully',
+                'data': {
+                    'user': {
+                        'id': guest_user.id,
+                        'username': guest_user.username,
+                        'email': guest_user.email,
+                        'first_name': guest_user.first_name,
+                        'last_name': guest_user.last_name,
+                        'is_guest': True,
+                        'guest_id': guest_id
+                    },
+                    'tokens': {
+                        'access': str(access_token),
+                        'refresh': str(refresh),
+                    }
+                }
+            }, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            return Response({
+                'success': False,
+                'message': 'Failed to generate guest tokens',
+                'error': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

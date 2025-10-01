@@ -28,7 +28,7 @@ urlpatterns = [
     path('blog/',include('Blog.urls')),
     path('product/',include('Product.urls')),
     path('review/',include('Review.urls')),
-    
+    path('coupon/',include('Coupon.urls')),
     # Django Allauth URLs
     path('accounts/', include('allauth.urls')),
 ]

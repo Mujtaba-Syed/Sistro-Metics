@@ -3097,8 +3097,8 @@ input.num-product::-webkit-inner-spin-button {
 
 /*---------------------------------------------*/
 .hov-btn3:hover {
-  border-color: #717fe0;
-  background-color: #717fe0;
+  border-color: #e83e8c;
+  background-color: #e83e8c;
   color: #fff;
 }
 
@@ -3583,6 +3583,13 @@ input.num-product::-webkit-inner-spin-button {
   .sec-blog .col-md-8 {
     margin-top: 30px;
   }
+}
+
+.update-cart-btn {
+  color: #e83e8c !important;
+}
+.hov-btn3:hover .update-cart-btn {
+  color: #fff !important;
 }
 
 

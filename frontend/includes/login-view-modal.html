@@ -220,30 +220,73 @@ function closeLoginModal() {
     }
 }
 
+// Function to get CSRF cookie
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 // Function to handle guest login
 function loginAsGuest() {
     console.log('Guest login clicked');
     
-    // Set guest authentication
-    authTokens.isGuest = true;
-    authTokens.user = {
-        id: 'guest_' + Date.now(),
-        email: 'guest@example.com',
-        name: 'Guest User',
-        isGuest: true
-    };
+    // Generate a unique guest ID
+    const guestId = 'guest_' + Date.now();
     
-    // Store in sessionStorage for persistence
-    sessionStorage.setItem('authTokens', JSON.stringify(authTokens));
-    
-    // Close modal
-    closeLoginModal();
-    
-    // Show success message
-    showNotification('Welcome! You can now add items to cart.', 'success');
-    
-    // Enable add to cart functionality
-    enableAddToCart();
+    // Call backend to generate proper JWT tokens for guest
+    fetch('/user-auth/guest-tokens/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({
+            guest_id: guestId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Guest token response:', data);
+        
+        if (data.success && data.data) {
+            // Set guest authentication with proper tokens
+            authTokens.isGuest = true;
+            authTokens.user = data.data.user;
+            authTokens.accessToken = data.data.tokens.access;
+            authTokens.refreshToken = data.data.tokens.refresh;
+            
+            // Store in sessionStorage for persistence
+            sessionStorage.setItem('authTokens', JSON.stringify(authTokens));
+            
+            console.log('Guest authentication set with tokens:', authTokens);
+            
+            // Close modal
+            closeLoginModal();
+            
+            // Show success message
+            showNotification('Welcome! You can now add items to cart.', 'success');
+            
+            // Enable add to cart functionality
+            enableAddToCart();
+        } else {
+            console.error('Failed to generate guest tokens:', data);
+            showNotification('Failed to login as guest. Please try again.', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error generating guest tokens:', error);
+        showNotification('Failed to login as guest. Please try again.', 'error');
+    });
 }
 
 // Function to handle Google login
