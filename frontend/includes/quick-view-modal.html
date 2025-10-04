@@ -103,9 +103,9 @@
                                         <select class="js-select2" name="size">
                                             <option>Choose an option</option>
                                             <option>Size S</option>
-                                            <option>Size M</option>
+                                            <!-- <option>Size M</option>
                                             <option>Size L</option>
-                                            <option>Size XL</option>
+                                            <option>Size XL</option> -->
                                         </select>
                                         <div class="dropDownSelect2"></div>
                                     </div>
@@ -145,7 +145,7 @@
                                         </div>
                                     </div>
 
-                                    <button class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04" onclick="handleAddToCart(this.dataset.productId)">
+                                    <button class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail" data-product-id="" onclick="addToCart(this.dataset.productId)">
                                         Add to cart
                                     </button>
                                 </div>

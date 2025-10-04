@@ -8,4 +8,6 @@ router.register(r'products', views.ProductViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('filter/', views.ProductFilterView.as_view(), name='product-filter'),
+    path('search/', views.ProductSearchView.as_view(), name='product-search'),
 ]

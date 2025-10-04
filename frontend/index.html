@@ -270,37 +270,33 @@
 
 			<div class="flex-w flex-sb-m p-b-52">
 				<div class="flex-w flex-l-m filter-tope-group m-tb-10">
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*">
+					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*" onclick="filterProducts('all')">
 						All Products
 					</button>
 
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".women">
-						Makeup
+					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".discounted" onclick="filterProducts('discounted')">
+						Discounted Products
 					</button>
 
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".men">
-						Skincare
+					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".featured" onclick="filterProducts('featured')">
+						Featured Products
 					</button>
 
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".bag">
-						Fragrance
+					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".new" onclick="filterProducts('new')">
+						New Products
 					</button>
 
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".shoes">
-						Tools
-					</button>
-
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".watches">
-						Accessories
+					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".best-selling" onclick="filterProducts('best-selling')">
+						Best Selling Products
 					</button>
 				</div>
 
 				<div class="flex-w flex-c-m m-tb-10">
-					<div class="flex-c-m stext-106 cl6 size-104 bor4 pointer hov-btn3 trans-04 m-r-8 m-tb-4 js-show-filter">
+					<!-- <div class="flex-c-m stext-106 cl6 size-104 bor4 pointer hov-btn3 trans-04 m-r-8 m-tb-4 js-show-filter">
 						<i class="icon-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-filter-list"></i>
 						<i class="icon-close-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"></i>
 						 Filter
-					</div>
+					</div> -->
 
 					<div class="flex-c-m stext-106 cl6 size-105 bor4 pointer hov-btn3 trans-04 m-tb-4 js-show-search">
 						<i class="icon-search cl2 m-r-6 fs-15 trans-04 zmdi zmdi-search"></i>
@@ -312,15 +308,15 @@
 				<!-- Search product -->
 				<div class="dis-none panel-search w-full p-t-10 p-b-15">
 					<div class="bor8 dis-flex p-l-15">
-						<button class="size-113 flex-c-m fs-16 cl2 hov-cl1 trans-04">
+						<button class="size-113 flex-c-m fs-16 cl2 hov-cl1 trans-04" onclick="performSearch()">
 							<i class="zmdi zmdi-search"></i>
 						</button>
 
-						<input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="search-product" placeholder="Search">
+						<input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="search-product" id="search-input" placeholder="Search products..." onkeypress="handleSearchKeyPress(event)">
 					</div>	
 				</div>
 
-				<!-- Filter -->
+				<!-- Filter
 				<div class="dis-none panel-filter w-full p-t-10">
 					<div class="wrap-filter flex-w bg6 w-full p-lr-40 p-t-27 p-lr-15-sm">
 						<div class="filter-col1 p-r-15 p-b-27">
@@ -507,12 +503,17 @@
 							</div>
 						</div>
 					</div>
-				</div>
+				</div> -->
 			</div>
 
 			<div class="row isotope-grid">
 				{% for product in all_products %}
-				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item">
+				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item 
+					{% if product.is_on_sale %}discounted{% endif %}
+					{% if product.is_featured %}featured{% endif %}
+					{% if product.is_new %}new{% endif %}
+					{% if product.rating == 5 %}best-selling{% endif %}
+				">
 					<!-- Block2 -->
                     <div class="block2" style="border: 2px solid #e83e8c; border-radius: 8px; padding: 8px; overflow: visible; display: flex; flex-direction: column; min-height: 480px; height: auto;">
 						<div class="block2-pic hov-img0" style="overflow: hidden; position: relative; cursor: zoom-in; flex-shrink: 0; height: 200px;">
@@ -833,6 +834,231 @@
 	<script src="{% static 'js/main.js' %}"></script>
 	<script src="{% static 'js/cart.js' %}"></script>
 	<script src="{% static 'js/index.js' %}"></script>
+	
+	<script>
+	// Simple product filtering function
+	function filterProducts(filterType) {
+		console.log('Filtering products by:', filterType);
+		
+		// Get all product items
+		const products = document.querySelectorAll('.isotope-item');
+		
+		// Update active button
+		document.querySelectorAll('.filter-tope-group button').forEach(btn => {
+			btn.classList.remove('how-active1');
+		});
+		event.target.classList.add('how-active1');
+		
+		// Show/hide products based on filter
+		products.forEach(product => {
+			if (filterType === 'all') {
+				product.style.display = 'block';
+			} else {
+				if (product.classList.contains(filterType)) {
+					product.style.display = 'block';
+				} else {
+					product.style.display = 'none';
+				}
+			}
+		});
+		
+		console.log('Filter applied:', filterType);
+	}
+	
+	// Search functionality
+	let searchTimeout;
+	
+	function handleSearchKeyPress(event) {
+		if (event.key === 'Enter') {
+			event.preventDefault();
+			performSearch();
+		} else {
+			// Debounce search - search after user stops typing for 500ms
+			clearTimeout(searchTimeout);
+			searchTimeout = setTimeout(() => {
+				performSearch();
+			}, 500);
+		}
+	}
+	
+	async function performSearch() {
+		const searchInput = document.getElementById('search-input');
+		const query = searchInput.value.trim();
+		
+		console.log('Searching for:', query);
+		
+		if (!query) {
+			// If search is empty, show all products
+			filterProducts('all');
+			return;
+		}
+		
+		try {
+			// Show loading state
+			showSearchLoading();
+			
+			// Make API call to search endpoint
+			const response = await fetch(`http://127.0.0.1:8000/product/search/?q=${encodeURIComponent(query)}`);
+			
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+			
+			const data = await response.json();
+			console.log('Search results:', data);
+			
+			// Handle both paginated and non-paginated responses
+			const products = data.results || data.data || [];
+			console.log('Products to display:', products);
+			
+			// Display search results
+			displaySearchResults(products, query);
+			
+		} catch (error) {
+			console.error('Search error:', error);
+			showSearchError('Failed to search products');
+		}
+	}
+	
+	function showSearchLoading() {
+		const productGrid = document.querySelector('.isotope-grid');
+		if (productGrid) {
+			productGrid.innerHTML = `
+				<div class="col-12" style="text-align: center; padding: 50px;">
+					<div style="color: #e83e8c;">
+						<i class="fa fa-spinner fa-spin" style="font-size: 3rem; margin-bottom: 15px;"></i>
+						<p style="margin: 0;">Searching products...</p>
+					</div>
+				</div>
+			`;
+		}
+	}
+	
+	function showSearchError(message) {
+		const productGrid = document.querySelector('.isotope-grid');
+		if (productGrid) {
+			productGrid.innerHTML = `
+				<div class="col-12" style="text-align: center; padding: 50px;">
+					<div style="color: #dc3545;">
+						<i class="fa fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 15px;"></i>
+						<p style="margin: 0;">${message}</p>
+						<button onclick="filterProducts('all')" class="btn btn-primary" style="margin-top: 15px; background: #e83e8c; border: none; padding: 10px 20px; border-radius: 5px; color: white;">
+							Show All Products
+						</button>
+					</div>
+				</div>
+			`;
+		}
+	}
+	
+	function displaySearchResults(products, query) {
+		console.log('displaySearchResults called with:', products.length, 'products');
+		console.log('Products array:', products);
+		
+		const productGrid = document.querySelector('.isotope-grid');
+		if (!productGrid) {
+			console.error('Product grid not found');
+			return;
+		}
+		
+		console.log('Product grid found:', productGrid);
+		
+		if (products.length === 0) {
+			productGrid.innerHTML = `
+				<div class="col-12" style="text-align: center; padding: 50px;">
+					<div style="color: #666;">
+						<i class="fa fa-search" style="font-size: 3rem; margin-bottom: 15px;"></i>
+						<p style="margin: 0;">No products found for "${query}"</p>
+						<button onclick="filterProducts('all')" class="btn btn-primary" style="margin-top: 15px; background: #e83e8c; border: none; padding: 10px 20px; border-radius: 5px; color: white;">
+							Show All Products
+						</button>
+					</div>
+				</div>
+			`;
+			return;
+		}
+		
+		// Generate HTML for search results
+		let productsHTML = '';
+		products.forEach(product => {
+			const productImage = product.images && product.images.length > 0 
+				? `http://127.0.0.1:8000${product.images[0].image}` 
+				: '/static/images/product-01.jpg';
+			
+			const discountedPrice = product.discounted_price || product.price;
+			const originalPrice = product.is_on_sale ? product.price : null;
+			
+			let priceHTML = '';
+			if (originalPrice && product.is_on_sale) {
+				priceHTML = `
+					<span style="text-decoration: line-through; color: #999; margin-right: 10px;">Rs ${originalPrice}</span>
+					<span style="color: #e83e8c; font-weight: bold;">Rs ${discountedPrice}</span>
+				`;
+			} else {
+				priceHTML = `<span style="color: #333; font-weight: bold;">Rs ${discountedPrice}</span>`;
+			}
+			
+			let badgesHTML = '';
+			if (product.is_on_sale) {
+				badgesHTML += `<span class="block2-label-sale" style="position: absolute; top: 10px; left: 10px; z-index: 100; background: #e83e8c; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">-${product.percentage_discount}%</span>`;
+			}
+			if (product.is_new) {
+				badgesHTML += `<span class="block2-label-new" style="position: absolute; top: 10px; right: 10px; z-index: 100; background: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">New</span>`;
+			}
+			if (product.is_featured) {
+				badgesHTML += `<span class="block2-label-featured" style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 100; background: #ffc107; color: black; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">Featured</span>`;
+			}
+			
+			productsHTML += `
+				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item">
+					<div class="block2" style="border: 2px solid #e83e8c; border-radius: 8px; padding: 8px; overflow: visible; display: flex; flex-direction: column; min-height: 480px; height: auto;">
+						<div class="block2-pic hov-img0" style="overflow: hidden; position: relative; cursor: zoom-in; flex-shrink: 0; height: 200px;">
+							<img src="${productImage}" alt="${product.name}" onerror="this.src='/static/images/product-01.jpg'" style="transition: transform 0.3s ease; width: 100%; height: 100%; object-fit: cover; transform-origin: center;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+							${badgesHTML}
+							<a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1" data-product-id="${product.id}">
+								Quick View
+							</a>
+						</div>
+						<div class="block2-txt flex-w flex-t p-t-14" style="flex-grow: 1; min-height: 160px;">
+							<div class="block2-txt-child1 flex-col-l">
+								<a href="product-detail.html?id=${product.id}" class="stext-104 cl5 hov-cl1 trans-04 js-name-b2 p-b-6" data-name="${product.name}">
+									${product.name}
+								</a>
+								<span class="stext-105 cl3">
+									${priceHTML}
+								</span>
+								<div class="stext-105 cl3" style="margin-top: 5px;">
+									<span style="color: #ffc107;">★★★★★</span>
+									<span style="font-size: 12px; color: #666; margin-left: 5px;">
+										${product.rating} (${product.total_reviews})
+									</span>
+								</div>
+							</div>
+							<div class="block2-txt-child2 flex-r p-t-3">
+								<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2" data-product-id="${product.id}">
+									<img class="icon-heart1 dis-block trans-04" src="/static/images/icons/icon-heart-01.png" alt="ICON">
+									<img class="icon-heart2 dis-block trans-04 ab-t-l" src="/static/images/icons/icon-heart-02.png" alt="ICON">
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			`;
+		});
+		
+		productGrid.innerHTML = productsHTML;
+		
+		console.log('Generated HTML length:', productsHTML.length);
+		console.log('First 500 chars of HTML:', productsHTML.substring(0, 500));
+		
+		// Update filter buttons to show search is active
+		document.querySelectorAll('.filter-tope-group button').forEach(btn => {
+			btn.classList.remove('how-active1');
+		});
+		
+		console.log(`Displayed ${products.length} search results for "${query}"`);
+	}
+	</script>
 	<script src="{% static 'js/index-blog.js' %}"></script>
 
 </body>
