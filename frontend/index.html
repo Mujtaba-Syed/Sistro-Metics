@@ -506,7 +506,7 @@
 				</div> -->
 			</div>
 
-			<div class="row isotope-grid">
+			<div class="row isotope-grid" style="min-height: 400px; margin-bottom: 60px;">
 				{% for product in all_products %}
 				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item 
 					{% if product.is_on_sale %}discounted{% endif %}
@@ -599,7 +599,7 @@
 
 			<!-- Load more -->
 			<div class="flex-c-m flex-w w-full p-t-45">
-				<a href="#" class="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04">
+				<a href="{% url 'product' %}" class="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04">
 					Load More
 				</a>
 			</div>
@@ -836,12 +836,37 @@
 	<script src="{% static 'js/index.js' %}"></script>
 	
 	<script>
+	// Store original products HTML
+	let originalProductsHTML = '';
+	
+	// Initialize original products on page load
+	document.addEventListener('DOMContentLoaded', function() {
+		const productGrid = document.querySelector('.isotope-grid');
+		if (productGrid) {
+			originalProductsHTML = productGrid.innerHTML;
+			console.log('Original products stored');
+		}
+	});
+	
+	// Function to restore original products
+	function restoreOriginalProducts() {
+		const productGrid = document.querySelector('.isotope-grid');
+		if (productGrid && originalProductsHTML) {
+			productGrid.innerHTML = originalProductsHTML;
+			console.log('Original products restored');
+		}
+	}
+	
 	// Simple product filtering function
 	function filterProducts(filterType) {
 		console.log('Filtering products by:', filterType);
 		
+		// Always restore original products first
+		restoreOriginalProducts();
+		
 		// Get all product items
 		const products = document.querySelectorAll('.isotope-item');
+		const productGrid = document.querySelector('.isotope-grid');
 		
 		// Update active button
 		document.querySelectorAll('.filter-tope-group button').forEach(btn => {
@@ -849,20 +874,46 @@
 		});
 		event.target.classList.add('how-active1');
 		
+		let visibleCount = 0;
+		
 		// Show/hide products based on filter
 		products.forEach(product => {
 			if (filterType === 'all') {
 				product.style.display = 'block';
+				visibleCount++;
 			} else {
 				if (product.classList.contains(filterType)) {
 					product.style.display = 'block';
+					visibleCount++;
 				} else {
 					product.style.display = 'none';
 				}
 			}
 		});
 		
-		console.log('Filter applied:', filterType);
+		// Adjust grid container height and spacing based on visible products
+		if (productGrid) {
+			if (visibleCount === 0) {
+				// No products visible - show message and maintain spacing
+				productGrid.innerHTML = `
+					<div class="col-12" style="text-align: center; padding: 60px 20px; min-height: 300px; display: flex; align-items: center; justify-content: center;">
+						<div>
+							<i class="fa fa-search" style="font-size: 3rem; color: #e83e8c; margin-bottom: 15px;"></i>
+							<h4 style="color: #666; margin-bottom: 10px;">No products found</h4>
+							<p style="color: #999;">Try adjusting your filter criteria</p>
+						</div>
+					</div>
+				`;
+				productGrid.style.minHeight = '300px';
+				productGrid.style.marginBottom = '60px';
+			} else {
+				// Products visible - ensure proper spacing
+				productGrid.style.minHeight = '400px';
+				productGrid.style.marginBottom = '60px';
+			}
+		}
+		
+		console.log('Filter applied:', filterType, 'Visible products:', visibleCount);
 	}
 	
 	// Search functionality
@@ -888,8 +939,8 @@
 		console.log('Searching for:', query);
 		
 		if (!query) {
-			// If search is empty, show all products
-			filterProducts('all');
+			// If search is empty, restore original products
+			restoreOriginalProducts();
 			return;
 		}
 		
@@ -924,13 +975,16 @@
 		const productGrid = document.querySelector('.isotope-grid');
 		if (productGrid) {
 			productGrid.innerHTML = `
-				<div class="col-12" style="text-align: center; padding: 50px;">
+				<div class="col-12" style="text-align: center; padding: 60px 20px; min-height: 300px; display: flex; align-items: center; justify-content: center;">
 					<div style="color: #e83e8c;">
 						<i class="fa fa-spinner fa-spin" style="font-size: 3rem; margin-bottom: 15px;"></i>
-						<p style="margin: 0;">Searching products...</p>
+						<h4 style="margin-bottom: 10px;">Searching products...</h4>
+						<p style="margin: 0;">Please wait while we find the best matches for you</p>
 					</div>
 				</div>
 			`;
+			productGrid.style.minHeight = '300px';
+			productGrid.style.marginBottom = '60px';
 		}
 	}
 	
@@ -938,16 +992,19 @@
 		const productGrid = document.querySelector('.isotope-grid');
 		if (productGrid) {
 			productGrid.innerHTML = `
-				<div class="col-12" style="text-align: center; padding: 50px;">
+				<div class="col-12" style="text-align: center; padding: 60px 20px; min-height: 300px; display: flex; align-items: center; justify-content: center;">
 					<div style="color: #dc3545;">
 						<i class="fa fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 15px;"></i>
-						<p style="margin: 0;">${message}</p>
-						<button onclick="filterProducts('all')" class="btn btn-primary" style="margin-top: 15px; background: #e83e8c; border: none; padding: 10px 20px; border-radius: 5px; color: white;">
+						<h4 style="margin-bottom: 10px;">Search Error</h4>
+						<p style="margin: 0 0 15px 0;">${message}</p>
+						<button onclick="filterProducts('all')" class="btn btn-primary" style="background: #e83e8c; border: none; padding: 10px 20px; border-radius: 5px; color: white;">
 							Show All Products
 						</button>
 					</div>
 				</div>
 			`;
+			productGrid.style.minHeight = '300px';
+			productGrid.style.marginBottom = '60px';
 		}
 	}
 	
@@ -965,16 +1022,19 @@
 		
 		if (products.length === 0) {
 			productGrid.innerHTML = `
-				<div class="col-12" style="text-align: center; padding: 50px;">
+				<div class="col-12" style="text-align: center; padding: 60px 20px; min-height: 300px; display: flex; align-items: center; justify-content: center;">
 					<div style="color: #666;">
 						<i class="fa fa-search" style="font-size: 3rem; margin-bottom: 15px;"></i>
-						<p style="margin: 0;">No products found for "${query}"</p>
-						<button onclick="filterProducts('all')" class="btn btn-primary" style="margin-top: 15px; background: #e83e8c; border: none; padding: 10px 20px; border-radius: 5px; color: white;">
+						<h4 style="margin-bottom: 10px;">No products found</h4>
+						<p style="margin: 0 0 15px 0;">No products found for "${query}"</p>
+						<button onclick="filterProducts('all')" class="btn btn-primary" style="background: #e83e8c; border: none; padding: 10px 20px; border-radius: 5px; color: white;">
 							Show All Products
 						</button>
 					</div>
 				</div>
 			`;
+			productGrid.style.minHeight = '300px';
+			productGrid.style.marginBottom = '60px';
 			return;
 		}
 		
@@ -1047,6 +1107,10 @@
 		});
 		
 		productGrid.innerHTML = productsHTML;
+		
+		// Ensure proper spacing for search results
+		productGrid.style.minHeight = '400px';
+		productGrid.style.marginBottom = '60px';
 		
 		console.log('Generated HTML length:', productsHTML.length);
 		console.log('First 500 chars of HTML:', productsHTML.substring(0, 500));
