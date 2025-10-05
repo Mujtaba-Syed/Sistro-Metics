@@ -35,12 +35,44 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'css/util.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
 	<style>
-		/* Clean layout without excessive static spacing */
+		/* Sticky footer - always at bottom */
+		html, body {
+			height: 100%;
+			margin: 0;
+			padding: 0;
+		}
+		
+		body {
+			display: flex;
+			flex-direction: column;
+			min-height: 100vh;
+		}
+		
+		/* Main content area - grows to fill space */
+		.m-t-23 {
+			flex: 1;
+			margin-bottom: 0 !important;
+			padding-bottom: 0 !important;
+		}
+		
+		/* Footer - always at bottom */
 		footer {
-			position: relative !important;
-			z-index: 1 !important;
-			clear: both !important;
-			margin-top: 50px !important;
+			position: relative;
+			bottom: 0;
+			width: 100%;
+			margin-top: auto;
+			z-index: 1;
+		}
+		
+		/* Ensure proper spacing for products container */
+		#products-container {
+			margin-bottom: 40px !important;
+		}
+		
+		/* Ensure pagination has proper spacing */
+		.pagination-container {
+			margin: 40px 0 !important;
+			padding: 20px 0 !important;
 		}
 		
 		/* Product cards spacing */
@@ -51,6 +83,120 @@
 		/* Product card container */
 		.block2 {
 			margin-bottom: 20px !important;
+		}
+		
+		/* Ensure consistent grid layout */
+		.isotope-grid {
+			display: flex;
+			flex-wrap: wrap;
+			margin: 0 -15px;
+		}
+		
+		.isotope-item {
+			flex: 0 0 25%;
+			max-width: 25%;
+			padding: 0 15px;
+			margin-bottom: 30px;
+		}
+		
+		/* Only center when there are fewer than 4 products */
+		.isotope-grid.centered {
+			justify-content: center;
+		}
+		
+		/* Ensure product cards maintain consistent width */
+		.isotope-item .block2 {
+			width: 100%;
+			max-width: 100%;
+		}
+		
+		/* Fix product card proportions - override inline styles */
+		.isotope-item .block2 {
+			min-height: 520px !important;
+			height: auto !important;
+			display: flex !important;
+			flex-direction: column !important;
+		}
+		
+		.isotope-item .block2-pic {
+			width: 100% !important;
+			height: 200px !important;
+			overflow: hidden !important;
+			flex-shrink: 0 !important;
+		}
+		
+		.isotope-item .block2-pic img {
+			width: 100% !important;
+			height: 100% !important;
+			object-fit: cover !important;
+		}
+		
+		/* Ensure buttons fit properly */
+		.isotope-item .block2-btn-container {
+			text-align: center !important;
+			margin-top: auto !important;
+			padding: 15px 10px !important;
+		}
+		
+		.isotope-item .block2-btn-container div {
+			display: flex !important;
+			gap: 8px !important;
+			justify-content: center !important;
+			flex-wrap: wrap !important;
+		}
+		
+		.isotope-item .block2-btn-container a,
+		.isotope-item .block2-btn-container button {
+			min-width: 120px !important;
+			text-align: center !important;
+			padding: 12px 20px !important;
+			font-size: 12px !important;
+		}
+		
+		/* Fix price display - override inline styles */
+		.isotope-item .block2-txt {
+			flex-grow: 1 !important;
+			min-height: 180px !important;
+		}
+		
+		.isotope-item .stext-105 {
+			font-size: 16px !important;
+			font-weight: bold !important;
+			color: #333 !important;
+		}
+		
+		.isotope-item .stext-106 {
+			font-size: 14px !important;
+			color: #999 !important;
+			text-decoration: line-through !important;
+		}
+		
+		.isotope-item .stext-107 {
+			font-size: 12px !important;
+			color: #e83e8c !important;
+			font-weight: bold !important;
+		}
+		
+		/* Responsive grid */
+		@media (max-width: 992px) {
+			.isotope-item {
+				flex: 0 0 33.333%;
+				max-width: 33.333%;
+			}
+		}
+		
+		@media (max-width: 768px) {
+			.isotope-item {
+				flex: 0 0 50%;
+				max-width: 50%;
+			}
+		}
+		
+		@media (max-width: 576px) {
+			.isotope-item {
+				flex: 0 0 100%;
+				max-width: 100%;
+			}
 		}
 		
 		/* Pagination styling */
@@ -564,41 +710,233 @@
 		window.CSRF_TOKEN = '{{ csrf_token }}';
 	</script>
 	<script src="{% static 'js/main.js' %}"></script>
-	<script src="{% static 'js/product.js' %}"></script>
 	
 	<!-- Product Pagination and Filtering System -->
 	<script>
 	// Pagination configuration
-	const PRODUCTS_PER_PAGE = 9;
+	const PRODUCTS_PER_PAGE = 12; // 3 rows of 4 products each
 	let currentPage = 1;
 	let currentFilter = 'all';
 	let allProducts = [];
 	let filteredProducts = [];
 	let searchResults = [];
 	let isSearchActive = false;
+	let totalProducts = 0;
+	let totalPages = 0;
+	let isLoading = false;
 	
 	// Initialize on page load
 	document.addEventListener('DOMContentLoaded', function() {
+		// Check if there's a page parameter in URL
+		const urlParams = new URLSearchParams(window.location.search);
+		const pageParam = urlParams.get('page');
+		if (pageParam) {
+			currentPage = parseInt(pageParam);
+		}
+		
 		initializeProducts();
 		initializePagination();
+		setupEventListeners();
 	});
 	
-	// Initialize products from DOM
-	function initializeProducts() {
-		const productItems = document.querySelectorAll('.isotope-item');
-		allProducts = Array.from(productItems).map(item => ({
-			element: item,
-			classes: Array.from(item.classList),
-			isVisible: true
-		}));
+	// Initialize products from API
+	async function initializeProducts() {
+		try {
+			isLoading = true;
+			showLoadingState();
+			
+			// Load products from API for the current page (12 per page)
+			const response = await fetch(`http://127.0.0.1:8000/product/products/?page=${currentPage}&page_size=12`);
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+			
+			const data = await response.json();
+			console.log('API Response:', data);
+			
+			// Store pagination info
+			totalProducts = data.count;
+			totalPages = Math.ceil(totalProducts / PRODUCTS_PER_PAGE);
+			
+			console.log('Pagination info - totalProducts:', totalProducts, 'totalPages:', totalPages, 'currentPage:', currentPage);
+			
+			// Process products
+			processProducts(data.results);
+			
+			// Update URL
+			updateURL(currentPage);
+			
+			// Update pagination after products are processed
+			setTimeout(() => {
+				updatePagination();
+			}, 100);
+			
+		} catch (error) {
+			console.error('Error loading products:', error);
+			showErrorState('Failed to load products');
+		} finally {
+			isLoading = false;
+		}
+	}
+	
+	// Process products from API response
+	function processProducts(products) {
+		const productGrid = document.querySelector('.isotope-grid');
+		let productsHTML = '';
+		
+		products.forEach(product => {
+			const productImage = product.images && product.images.length > 0 
+				? `${window.BASE_URL}${product.images[0].image}` 
+				: '/static/images/product-01.jpg';
+			
+			const discountLabel = product.is_on_sale ? 
+				`<span class="block2-label-sale" style="position: absolute; top: 10px; left: 10px; z-index: 100; background: #e83e8c; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">-${product.percentage_discount}%</span>` : '';
+			
+			const newLabel = product.is_new ? 
+				`<span class="block2-label-new" style="position: absolute; top: 10px; right: 10px; z-index: 100; background: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">New</span>` : '';
+			
+			const featuredLabel = product.is_featured ? 
+				`<span class="block2-label-featured" style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 100; background: #ffc107; color: black; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">Featured</span>` : '';
+			
+			const priceHTML = product.is_on_sale ? 
+				`<span class="stext-106 cl4" style="text-decoration: line-through;">Rs ${product.price}</span>
+				 <span class="stext-105 cl3 font-weight-bold font-size-16">Rs ${product.discounted_price}</span>
+				 <div class="stext-107 cl6" style="font-size: 12px; color: #e83e8c; font-weight: bold; margin-top: 2px;">
+					 Save Rs ${product.percentage_discount}% off
+				 </div>` :
+				`<span class="stext-105 cl3 font-weight-bold font-size-16">Rs ${product.price}</span>`;
+			
+			const starsHTML = Array.from({length: 5}, (_, i) => 
+				`<span style="color: ${i < product.rating ? '#ffc107' : '#ddd'};">★</span>`
+			).join('');
+			
+			productsHTML += `
+				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item 
+					${product.is_on_sale ? 'discounted' : ''}
+					${product.is_featured ? 'featured' : ''}
+					${product.is_new ? 'new' : ''}
+					${product.rating == 5 ? 'best-selling' : ''}
+				" style="margin-bottom: 30px;">
+					<div class="block2" style="border: 2px solid #e83e8c; border-radius: 8px; padding: 8px; overflow: visible; display: flex; flex-direction: column; min-height: 520px; height: auto; margin-bottom: 30px;">
+						<div class="block2-pic hov-img0" style="overflow: hidden; position: relative; cursor: zoom-in; flex-shrink: 0; height: 200px;">
+							<img src="${productImage}" alt="${product.name}" onerror="this.src='/static/images/product-01.jpg'" style="transition: transform 0.3s ease; width: 100%; height: 100%; object-fit: cover; transform-origin: center;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+							${discountLabel}
+							${newLabel}
+							${featuredLabel}
+						</div>
+						<div class="block2-txt flex-w flex-t p-t-14" style="flex-grow: 1; min-height: 180px;">
+							<div class="block2-txt-child1 flex-col-l">
+								<a href="/product-detail/?id=${product.id}" class="stext-104 cl5 hov-cl1 trans-04 js-name-b2 p-b-6">
+									${product.name}
+								</a>
+								<div class="stext-105 cl3">
+									${priceHTML}
+								</div>
+								<div class="rating-section" style="margin-top: 8px; display: flex; align-items: center; gap: 5px;">
+									<div class="stars" style="display: flex; gap: 1px;">
+										${starsHTML}
+									</div>
+									<span class="rating-text" style="font-size: 14px; color: #666; font-weight: 500;">
+										${product.rating} (${product.total_reviews} reviews)
+									</span>
+								</div>
+							</div>
+							<div class="block2-txt-child2 flex-r p-t-3">
+								<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2" data-product-id="${product.id}">
+									<img class="icon-heart1 dis-block trans-04" src="/static/images/icons/icon-heart-01.png" alt="ICON">
+									<img class="icon-heart2 dis-block trans-04 ab-t-l" src="/static/images/icons/icon-heart-02.png" alt="ICON">
+								</a>
+							</div>
+						</div>
+						<div class="block2-btn-container" style="text-align: center; margin-top: auto; padding: 15px 10px 15px 10px;">
+							<div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+								<a href="#" class="js-show-modal1" data-product-id="${product.id}" style="background-color: #e83e8c; color: white; border: none; border-radius: 25px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; padding: 12px 20px; font-size: 12px; text-decoration: none; display: inline-block; min-width: 120px; text-align: center;">
+									Quick View
+								</a>
+								<button onclick="handleAddToCart(${product.id})" style="background-color: #28a745; color: white; border: none; border-radius: 25px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; padding: 12px 20px; font-size: 12px; cursor: pointer; display: inline-block; min-width: 120px;">
+									Add to Cart
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			`;
+		});
+		
+		// Replace content
+		productGrid.innerHTML = productsHTML;
+		
+		// Create product objects for tracking
+		allProducts = Array.from(productGrid.querySelectorAll('.isotope-item')).map(item => {
+			const productId = item.querySelector('[data-product-id]')?.getAttribute('data-product-id');
+			const productName = item.querySelector('.js-name-b2')?.textContent?.trim();
+			const priceElement = item.querySelector('.stext-105');
+			const price = priceElement ? priceElement.textContent.replace('Rs ', '').trim() : '0';
+			const imageElement = item.querySelector('img');
+			const image = imageElement ? imageElement.src : '/static/images/product-01.jpg';
+			
+			return {
+				id: parseInt(productId) || 0,
+				name: productName || 'Unknown Product',
+				price: price,
+				image: image,
+				element: item,
+				classes: Array.from(item.classList),
+				isVisible: true
+			};
+		});
+		
 		filteredProducts = [...allProducts];
-		console.log('Initialized', allProducts.length, 'products');
+		console.log('Loaded', allProducts.length, 'products from API');
+		console.log('Total products:', totalProducts, 'Total pages:', totalPages);
+	}
+	
+	// Show loading state
+	function showLoadingState() {
+		const productGrid = document.querySelector('.isotope-grid');
+		if (productGrid) {
+			productGrid.innerHTML = `
+				<div class="col-12" style="text-align: center; padding: 60px 20px;">
+					<div style="color: #e83e8c;">
+						<i class="fa fa-spinner fa-spin" style="font-size: 3rem; margin-bottom: 15px;"></i>
+						<h4 style="margin-bottom: 10px;">Loading products...</h4>
+						<p style="margin: 0;">Please wait while we load the products</p>
+					</div>
+				</div>
+			`;
+		}
+	}
+	
+	// Show error state
+	function showErrorState(message) {
+		const productGrid = document.querySelector('.isotope-grid');
+		if (productGrid) {
+			productGrid.innerHTML = `
+				<div class="col-12" style="text-align: center; padding: 60px 20px;">
+					<div style="color: #dc3545;">
+						<i class="fa fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 15px;"></i>
+						<h4 style="margin-bottom: 10px;">Error</h4>
+						<p style="margin: 0 0 15px 0;">${message}</p>
+						<button onclick="location.reload()" class="btn btn-primary" style="background: #e83e8c; border: none; padding: 10px 20px; border-radius: 5px; color: white;">
+							Reload Page
+						</button>
+					</div>
+				</div>
+			`;
+		}
+	}
+	
+	// Update URL with page parameter
+	function updateURL(page) {
+		const url = new URL(window.location);
+		url.searchParams.set('page', page);
+		window.history.pushState({}, '', url);
+		console.log('Updated URL to:', url.toString());
 	}
 	
 	// Initialize pagination
 	function initializePagination() {
 		updatePagination();
-		showPage(1);
 	}
 	
 	// Update pagination controls
@@ -606,8 +944,7 @@
 		const paginationContainer = document.getElementById('pagination');
 		if (!paginationContainer) return;
 		
-		const totalProducts = isSearchActive ? searchResults.length : filteredProducts.length;
-		const totalPages = Math.ceil(totalProducts / PRODUCTS_PER_PAGE);
+		console.log('Updating pagination - totalPages:', totalPages, 'currentPage:', currentPage);
 		
 		if (totalPages <= 1) {
 			paginationContainer.innerHTML = '';
@@ -656,42 +993,54 @@
 			paginationHTML += `<li class="disabled"><a href="#">Next</a></li>`;
 		}
 		
+		console.log('Generated pagination HTML:', paginationHTML);
 		paginationContainer.innerHTML = paginationHTML;
 	}
 	
 	// Go to specific page
-	function goToPage(page) {
-		const totalProducts = isSearchActive ? searchResults.length : filteredProducts.length;
-		const totalPages = Math.ceil(totalProducts / PRODUCTS_PER_PAGE);
-		
+	async function goToPage(page) {
 		if (page < 1 || page > totalPages) return;
+		if (isLoading) return;
 		
 		currentPage = page;
-		showPage(page);
-		updatePagination();
+		
+		try {
+			isLoading = true;
+			showLoadingState();
+			
+			// Make API call for the specific page (12 per page)
+			const response = await fetch(`http://127.0.0.1:8000/product/products/?page=${page}&page_size=12`);
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+			
+			const data = await response.json();
+			console.log(`Page ${page} API Response:`, data);
+			
+			// Update pagination info
+			totalProducts = data.count;
+			totalPages = Math.ceil(totalProducts / PRODUCTS_PER_PAGE);
+			console.log('Updated pagination info - totalProducts:', totalProducts, 'totalPages:', totalPages);
+			
+			// Process products for this page
+			processProducts(data.results);
+			
+			// Update URL
+			updateURL(page);
+			
+			// Update pagination after products are processed
+			setTimeout(() => {
+				updatePagination();
+			}, 100);
+			
+		} catch (error) {
+			console.error('Error loading page:', error);
+			showErrorState('Failed to load page');
+		} finally {
+			isLoading = false;
+		}
 	}
 	
-	// Show specific page
-	function showPage(page) {
-		const totalProducts = isSearchActive ? searchResults.length : filteredProducts.length;
-		const startIndex = (page - 1) * PRODUCTS_PER_PAGE;
-		const endIndex = Math.min(startIndex + PRODUCTS_PER_PAGE, totalProducts);
-		
-		// Hide all products first
-		allProducts.forEach(product => {
-			product.element.style.display = 'none';
-		});
-		
-		// Show products for current page
-		const productsToShow = isSearchActive ? searchResults : filteredProducts;
-		for (let i = startIndex; i < endIndex; i++) {
-			if (productsToShow[i]) {
-				productsToShow[i].element.style.display = 'block';
-			}
-		}
-		
-		console.log(`Showing page ${page}: products ${startIndex + 1}-${endIndex} of ${totalProducts}`);
-	}
 	
 	// Filter products
 	function filterProducts(filterType) {
@@ -717,6 +1066,12 @@
 		}
 		
 		console.log(`Filtered to ${filteredProducts.length} products`);
+		
+		// Debug: Log current state
+		console.log('Debug - All products:', allProducts.length);
+		console.log('Debug - Filtered products:', filteredProducts.length);
+		console.log('Debug - Current page:', currentPage);
+		console.log('Debug - Products per page:', PRODUCTS_PER_PAGE);
 		
 		// Update pagination and show first page
 		updatePagination();
@@ -756,7 +1111,7 @@
 			showSearchLoading();
 			
 			// Make API call
-			const response = await fetch(`http://127.0.0.1:8000/product/search/?q=${encodeURIComponent(query)}`);
+			const response = await fetch(`http://127.0.0.1:8000/product/search/?q=${encodeURIComponent(query)}&page_size=12`);
 			
 			if (!response.ok) {
 				throw new Error(`HTTP error! status: ${response.status}`);
@@ -879,6 +1234,11 @@
 			isVisible: true
 		}));
 		
+		// Hide all search results initially
+		searchResults.forEach(product => {
+			product.element.style.display = 'none';
+		});
+		
 		// Update pagination and show first page
 		updatePagination();
 		showPage(1);
@@ -936,6 +1296,188 @@
 			`;
 		}
 		updatePagination();
+	}
+	
+	// Setup event listeners for cart and wishlist
+	function setupEventListeners() {
+		// Quick view buttons
+		document.addEventListener('click', function(e) {
+			if (e.target.classList.contains('js-show-modal1')) {
+				e.preventDefault();
+				const productId = parseInt(e.target.getAttribute('data-product-id'));
+				handleQuickView(productId);
+			}
+		});
+		
+		// Wishlist buttons
+		document.addEventListener('click', function(e) {
+			if (e.target.closest('.js-addwish-b2')) {
+				e.preventDefault();
+				const productId = parseInt(e.target.closest('.js-addwish-b2').getAttribute('data-product-id'));
+				handleAddToWishlist(productId);
+			}
+		});
+	}
+	
+	// Handle add to cart functionality
+	function handleAddToCart(productId) {
+		const product = allProducts.find(p => p.id === productId);
+		if (!product) {
+			console.error('Product not found');
+			return;
+		}
+		
+		// Get existing cart from localStorage
+		let cart = JSON.parse(localStorage.getItem('cart')) || [];
+		
+		// Check if product already exists in cart
+		const existingItem = cart.find(item => item.id === productId);
+		
+		if (existingItem) {
+			existingItem.quantity += 1;
+		} else {
+			cart.push({
+				id: product.id,
+				name: product.name,
+				price: product.price,
+				image: product.image,
+				quantity: 1
+			});
+		}
+		
+		// Save cart to localStorage
+		localStorage.setItem('cart', JSON.stringify(cart));
+		
+		// Show success message
+		showSuccessMessage(`${product.name} added to cart!`);
+		
+		// Update cart count if cart counter exists
+		updateCartCount();
+	}
+	
+	// Handle quick view functionality
+	function handleQuickView(productId) {
+		// Redirect to product detail page
+		window.location.href = `/product-detail/?id=${productId}`;
+	}
+	
+	// Handle add to wishlist
+	function handleAddToWishlist(productId) {
+		const product = allProducts.find(p => p.id === productId);
+		if (!product) {
+			console.error('Product not found');
+			return;
+		}
+		
+		// Get existing wishlist from localStorage
+		let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+		
+		// Check if product already exists in wishlist
+		const existingItem = wishlist.find(item => item.id === productId);
+		
+		if (existingItem) {
+			// Remove from wishlist
+			wishlist = wishlist.filter(item => item.id !== productId);
+			showInfoMessage(`${product.name} removed from wishlist!`);
+		} else {
+			// Add to wishlist
+			wishlist.push({
+				id: product.id,
+				name: product.name,
+				price: product.price,
+				image: product.image
+			});
+			showSuccessMessage(`${product.name} added to wishlist!`);
+		}
+		
+		// Save wishlist to localStorage
+		localStorage.setItem('wishlist', JSON.stringify(wishlist));
+		
+		// Update wishlist button state
+		updateWishlistButton(productId, !existingItem);
+	}
+	
+	// Update wishlist button state
+	function updateWishlistButton(productId, isInWishlist) {
+		const wishlistBtn = document.querySelector(`[data-product-id="${productId}"].js-addwish-b2`);
+		if (wishlistBtn) {
+			const heart1 = wishlistBtn.querySelector('.icon-heart1');
+			const heart2 = wishlistBtn.querySelector('.icon-heart2');
+			
+			if (isInWishlist) {
+				heart1.style.display = 'none';
+				heart2.style.display = 'block';
+			} else {
+				heart1.style.display = 'block';
+				heart2.style.display = 'none';
+			}
+		}
+	}
+	
+	// Update cart count display
+	function updateCartCount() {
+		const cart = JSON.parse(localStorage.getItem('cart')) || [];
+		const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+		
+		// Update cart counter if it exists
+		const cartCounter = document.querySelector('.cart-count');
+		if (cartCounter) {
+			cartCounter.textContent = totalItems;
+		}
+	}
+	
+	// Show success message
+	function showSuccessMessage(message) {
+		showToast(message, 'success');
+	}
+	
+	// Show error message
+	function showErrorMessage(message) {
+		showToast(message, 'error');
+	}
+	
+	// Show info message
+	function showInfoMessage(message) {
+		showToast(message, 'info');
+	}
+	
+	// Show toast notification
+	function showToast(message, type = 'info') {
+		// Create toast element
+		const toast = document.createElement('div');
+		toast.className = `toast-notification toast-${type}`;
+		toast.style.cssText = `
+			position: fixed;
+			top: 20px;
+			right: 20px;
+			background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#17a2b8'};
+			color: white;
+			padding: 12px 20px;
+			border-radius: 4px;
+			z-index: 9999;
+			font-weight: bold;
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+			transform: translateX(100%);
+			transition: transform 0.3s ease;
+		`;
+		toast.textContent = message;
+		
+		document.body.appendChild(toast);
+		
+		// Animate in
+		setTimeout(() => {
+			toast.style.transform = 'translateX(0)';
+		}, 100);
+		
+		// Remove after 3 seconds
+		setTimeout(() => {
+			toast.style.transform = 'translateX(100%)';
+			setTimeout(() => {
+				if (toast.parentNode) {
+					toast.parentNode.removeChild(toast);
+				}
+			}, 300);
+		}, 3000);
 	}
 	</script>
 
