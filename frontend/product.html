@@ -35,7 +35,7 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'css/util.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
 	<style>
-		/* Fix footer positioning */
+		/* Clean layout without excessive static spacing */
 		footer {
 			position: relative !important;
 			z-index: 1 !important;
@@ -43,35 +43,65 @@
 			margin-top: 50px !important;
 		}
 		
-		/* Ensure products container has proper flow */
-		#products-container {
-			position: relative;
-			z-index: 2;
-			margin-bottom: 50px !important;
-			padding-bottom: 30px !important;
-		}
-		
-		/* Main product container */
-		.bg0 {
-			position: relative;
-			z-index: 2;
-			margin-bottom: 50px !important;
-			padding-bottom: 30px !important;
-		}
-		
 		/* Product cards spacing */
 		.isotope-grid .col-sm-6.col-md-4.col-lg-3 {
 			margin-bottom: 30px !important;
 		}
 		
-		/* Ensure proper spacing for load more button */
-		.flex-c-m.flex-w.w-full.p-t-45.p-b-45 {
-			margin-bottom: 50px !important;
-		}
-		
 		/* Product card container */
 		.block2 {
 			margin-bottom: 20px !important;
+		}
+		
+		/* Pagination styling */
+		.pagination-container {
+			margin: 40px 0;
+			text-align: center;
+		}
+		
+		.pagination {
+			display: inline-flex;
+			list-style: none;
+			padding: 0;
+			margin: 0;
+		}
+		
+		.pagination li {
+			margin: 0 5px;
+		}
+		
+		.pagination a, .pagination span {
+			display: block;
+			padding: 10px 15px;
+			border: 1px solid #ddd;
+			border-radius: 5px;
+			text-decoration: none;
+			color: #333;
+			background: white;
+			transition: all 0.3s ease;
+		}
+		
+		.pagination a:hover {
+			background: #e83e8c;
+			color: white;
+			border-color: #e83e8c;
+		}
+		
+		.pagination .active span {
+			background: #e83e8c;
+			color: white;
+			border-color: #e83e8c;
+		}
+		
+		.pagination .disabled a {
+			color: #ccc;
+			cursor: not-allowed;
+		}
+		
+		.pagination .disabled a:hover {
+			background: white;
+			color: #ccc;
+			border-color: #ddd;
 		}
 	</style>
 <!--===============================================================================================-->
@@ -90,37 +120,29 @@
 		<div class="container container-margin">
 			<div class="flex-w flex-sb-m p-b-52" style="margin-top: 6rem;">
 				<div class="flex-w flex-l-m filter-tope-group m-tb-10">
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*">
+					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*" onclick="filterProducts('all')">
 						All Products
 					</button>
 
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".women">
-						Women
+					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".discounted" onclick="filterProducts('discounted')">
+						Discounted Products
 					</button>
 
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".men">
-						Men
+					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".featured" onclick="filterProducts('featured')">
+						Featured Products
 					</button>
 
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".bag">
-						Bag
+					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".new" onclick="filterProducts('new')">
+						New Products
 					</button>
 
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".shoes">
-						Shoes
-					</button>
-
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".watches">
-						Watches
+					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".best-selling" onclick="filterProducts('best-selling')">
+						Best Selling Products
 					</button>
 				</div>
 
 				<div class="flex-w flex-c-m m-tb-10">
-					<div class="flex-c-m stext-106 cl6 size-104 bor4 pointer hov-btn3 trans-04 m-r-8 m-tb-4 js-show-filter">
-						<i class="icon-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-filter-list"></i>
-						<i class="icon-close-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"></i>
-						 Filter
-					</div>
+					
 
 					<div class="flex-c-m stext-106 cl6 size-105 bor4 pointer hov-btn3 trans-04 m-tb-4 js-show-search">
 						<i class="icon-search cl2 m-r-6 fs-15 trans-04 zmdi zmdi-search"></i>
@@ -136,12 +158,12 @@
 							<i class="zmdi zmdi-search"></i>
 						</button>
 
-						<input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="search-product" placeholder="Search">
+						<input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="search-product" id="search-input" placeholder="Search products..." onkeypress="handleSearchKeyPress(event)">
 					</div>	
 				</div>
 
 				<!-- Filter -->
-				<div class="dis-none panel-filter w-full p-t-10">
+				<!-- <div class="dis-none panel-filter w-full p-t-10">
 					<div class="wrap-filter flex-w bg6 w-full p-lr-40 p-t-27 p-lr-15-sm">
 						<div class="filter-col1 p-r-15 p-b-27">
 							<div class="mtext-102 cl2 p-b-15">
@@ -327,12 +349,17 @@
 							</div>
 						</div>
 					</div>
-				</div>
+				</div> -->
 			</div>
 
 			<div class="row isotope-grid" id="products-container">
 				{% for product in products %}
-				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item" style="margin-bottom: 30px;">
+				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item 
+					{% if product.is_on_sale %}discounted{% endif %}
+					{% if product.is_featured %}featured{% endif %}
+					{% if product.is_new %}new{% endif %}
+					{% if product.rating == 5 %}best-selling{% endif %}
+				" style="margin-bottom: 30px;">
 					<div class="block2" style="border: 2px solid #e83e8c; border-radius: 8px; padding: 8px; overflow: visible; display: flex; flex-direction: column; min-height: 520px; height: auto; margin-bottom: 30px;">
 						<div class="block2-pic hov-img0" style="overflow: hidden; position: relative; cursor: zoom-in; flex-shrink: 0; height: 200px;">
 							{% if product.images.all %}
@@ -414,6 +441,14 @@
 				{% endfor %}
 			</div>
 
+			<!-- Pagination -->
+			<div class="pagination-container">
+				<nav aria-label="Product pagination">
+					<ul class="pagination" id="pagination">
+						<!-- Pagination will be generated by JavaScript -->
+					</ul>
+				</nav>
+			</div>
 		</div>
 	</div>
 
@@ -530,6 +565,379 @@
 	</script>
 	<script src="{% static 'js/main.js' %}"></script>
 	<script src="{% static 'js/product.js' %}"></script>
+	
+	<!-- Product Pagination and Filtering System -->
+	<script>
+	// Pagination configuration
+	const PRODUCTS_PER_PAGE = 9;
+	let currentPage = 1;
+	let currentFilter = 'all';
+	let allProducts = [];
+	let filteredProducts = [];
+	let searchResults = [];
+	let isSearchActive = false;
+	
+	// Initialize on page load
+	document.addEventListener('DOMContentLoaded', function() {
+		initializeProducts();
+		initializePagination();
+	});
+	
+	// Initialize products from DOM
+	function initializeProducts() {
+		const productItems = document.querySelectorAll('.isotope-item');
+		allProducts = Array.from(productItems).map(item => ({
+			element: item,
+			classes: Array.from(item.classList),
+			isVisible: true
+		}));
+		filteredProducts = [...allProducts];
+		console.log('Initialized', allProducts.length, 'products');
+	}
+	
+	// Initialize pagination
+	function initializePagination() {
+		updatePagination();
+		showPage(1);
+	}
+	
+	// Update pagination controls
+	function updatePagination() {
+		const paginationContainer = document.getElementById('pagination');
+		if (!paginationContainer) return;
+		
+		const totalProducts = isSearchActive ? searchResults.length : filteredProducts.length;
+		const totalPages = Math.ceil(totalProducts / PRODUCTS_PER_PAGE);
+		
+		if (totalPages <= 1) {
+			paginationContainer.innerHTML = '';
+			return;
+		}
+		
+		let paginationHTML = '';
+		
+		// Previous button
+		if (currentPage > 1) {
+			paginationHTML += `<li><a href="#" onclick="goToPage(${currentPage - 1})">Previous</a></li>`;
+		} else {
+			paginationHTML += `<li class="disabled"><a href="#">Previous</a></li>`;
+		}
+		
+		// Page numbers
+		const startPage = Math.max(1, currentPage - 2);
+		const endPage = Math.min(totalPages, currentPage + 2);
+		
+		if (startPage > 1) {
+			paginationHTML += `<li><a href="#" onclick="goToPage(1)">1</a></li>`;
+			if (startPage > 2) {
+				paginationHTML += `<li><span>...</span></li>`;
+			}
+		}
+		
+		for (let i = startPage; i <= endPage; i++) {
+			if (i === currentPage) {
+				paginationHTML += `<li class="active"><span>${i}</span></li>`;
+			} else {
+				paginationHTML += `<li><a href="#" onclick="goToPage(${i})">${i}</a></li>`;
+			}
+		}
+		
+		if (endPage < totalPages) {
+			if (endPage < totalPages - 1) {
+				paginationHTML += `<li><span>...</span></li>`;
+			}
+			paginationHTML += `<li><a href="#" onclick="goToPage(${totalPages})">${totalPages}</a></li>`;
+		}
+		
+		// Next button
+		if (currentPage < totalPages) {
+			paginationHTML += `<li><a href="#" onclick="goToPage(${currentPage + 1})">Next</a></li>`;
+		} else {
+			paginationHTML += `<li class="disabled"><a href="#">Next</a></li>`;
+		}
+		
+		paginationContainer.innerHTML = paginationHTML;
+	}
+	
+	// Go to specific page
+	function goToPage(page) {
+		const totalProducts = isSearchActive ? searchResults.length : filteredProducts.length;
+		const totalPages = Math.ceil(totalProducts / PRODUCTS_PER_PAGE);
+		
+		if (page < 1 || page > totalPages) return;
+		
+		currentPage = page;
+		showPage(page);
+		updatePagination();
+	}
+	
+	// Show specific page
+	function showPage(page) {
+		const totalProducts = isSearchActive ? searchResults.length : filteredProducts.length;
+		const startIndex = (page - 1) * PRODUCTS_PER_PAGE;
+		const endIndex = Math.min(startIndex + PRODUCTS_PER_PAGE, totalProducts);
+		
+		// Hide all products first
+		allProducts.forEach(product => {
+			product.element.style.display = 'none';
+		});
+		
+		// Show products for current page
+		const productsToShow = isSearchActive ? searchResults : filteredProducts;
+		for (let i = startIndex; i < endIndex; i++) {
+			if (productsToShow[i]) {
+				productsToShow[i].element.style.display = 'block';
+			}
+		}
+		
+		console.log(`Showing page ${page}: products ${startIndex + 1}-${endIndex} of ${totalProducts}`);
+	}
+	
+	// Filter products
+	function filterProducts(filterType) {
+		console.log('Filtering products by:', filterType);
+		
+		currentFilter = filterType;
+		isSearchActive = false;
+		currentPage = 1;
+		
+		// Update active button
+		document.querySelectorAll('.filter-tope-group button').forEach(btn => {
+			btn.classList.remove('how-active1');
+		});
+		event.target.classList.add('how-active1');
+		
+		// Filter products
+		if (filterType === 'all') {
+			filteredProducts = [...allProducts];
+		} else {
+			filteredProducts = allProducts.filter(product => 
+				product.classes.includes(filterType)
+			);
+		}
+		
+		console.log(`Filtered to ${filteredProducts.length} products`);
+		
+		// Update pagination and show first page
+		updatePagination();
+		showPage(1);
+	}
+	
+	// Search functionality
+	let searchTimeout;
+	
+	function handleSearchKeyPress(event) {
+		if (event.key === 'Enter') {
+			event.preventDefault();
+			performSearch();
+		} else {
+			clearTimeout(searchTimeout);
+			searchTimeout = setTimeout(() => {
+				performSearch();
+			}, 500);
+		}
+	}
+	
+	async function performSearch() {
+		const searchInput = document.getElementById('search-input');
+		const query = searchInput.value.trim();
+		
+		if (!query) {
+			// Clear search
+			isSearchActive = false;
+			currentPage = 1;
+			updatePagination();
+			showPage(1);
+			return;
+		}
+		
+		try {
+			// Show loading state
+			showSearchLoading();
+			
+			// Make API call
+			const response = await fetch(`http://127.0.0.1:8000/product/search/?q=${encodeURIComponent(query)}`);
+			
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+			
+			const data = await response.json();
+			console.log('Search results:', data);
+			
+			// Process search results
+			processSearchResults(data.products || [], query);
+			
+		} catch (error) {
+			console.error('Search error:', error);
+			showSearchError('Failed to search products');
+		}
+	}
+	
+	function processSearchResults(products, query) {
+		isSearchActive = true;
+		currentPage = 1;
+		
+		// Hide all original products
+		allProducts.forEach(product => {
+			product.element.style.display = 'none';
+		});
+		
+		if (products.length === 0) {
+			showNoResults(query);
+			return;
+		}
+		
+		// Generate HTML for search results
+		const productGrid = document.querySelector('.isotope-grid');
+		let productsHTML = '';
+		
+		products.forEach(product => {
+			const productImage = product.images && product.images.length > 0 
+				? `${window.BASE_URL}${product.images[0].image}` 
+				: '/static/images/product-01.jpg';
+			
+			const discountLabel = product.is_on_sale ? 
+				`<span class="block2-label-sale" style="position: absolute; top: 10px; left: 10px; z-index: 100; background: #e83e8c; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">-${product.percentage_discount}%</span>` : '';
+			
+			const newLabel = product.is_new ? 
+				`<span class="block2-label-new" style="position: absolute; top: 10px; right: 10px; z-index: 100; background: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">New</span>` : '';
+			
+			const featuredLabel = product.is_featured ? 
+				`<span class="block2-label-featured" style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 100; background: #ffc107; color: black; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">Featured</span>` : '';
+			
+			const priceHTML = product.is_on_sale ? 
+				`<span class="stext-106 cl4" style="text-decoration: line-through;">Rs ${product.price}</span>
+				 <span class="stext-105 cl3 font-weight-bold font-size-16">Rs ${product.discounted_price}</span>
+				 <div class="stext-107 cl6" style="font-size: 12px; color: #e83e8c; font-weight: bold; margin-top: 2px;">
+					 Save Rs ${product.percentage_discount}% off
+				 </div>` :
+				`<span class="stext-105 cl3 font-weight-bold font-size-16">Rs ${product.price}</span>`;
+			
+			const starsHTML = Array.from({length: 5}, (_, i) => 
+				`<span style="color: ${i < product.rating ? '#ffc107' : '#ddd'};">★</span>`
+			).join('');
+			
+			productsHTML += `
+				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item 
+					${product.is_on_sale ? 'discounted' : ''}
+					${product.is_featured ? 'featured' : ''}
+					${product.is_new ? 'new' : ''}
+					${product.rating === 5 ? 'best-selling' : ''}
+				" style="margin-bottom: 30px;">
+					<div class="block2" style="border: 2px solid #e83e8c; border-radius: 8px; padding: 8px; overflow: visible; display: flex; flex-direction: column; min-height: 520px; height: auto; margin-bottom: 30px;">
+						<div class="block2-pic hov-img0" style="overflow: hidden; position: relative; cursor: zoom-in; flex-shrink: 0; height: 200px;">
+							<img src="${productImage}" alt="${product.name}" onerror="this.src='/static/images/product-01.jpg'" style="transition: transform 0.3s ease; width: 100%; height: 100%; object-fit: cover; transform-origin: center;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+							${discountLabel}
+							${newLabel}
+							${featuredLabel}
+						</div>
+						<div class="block2-txt flex-w flex-t p-t-14" style="flex-grow: 1; min-height: 180px;">
+							<div class="block2-txt-child1 flex-col-l">
+								<a href="/product-detail/?id=${product.id}" class="stext-104 cl5 hov-cl1 trans-04 js-name-b2 p-b-6">
+									${product.name}
+								</a>
+								<div class="stext-105 cl3">
+									${priceHTML}
+								</div>
+								<div class="rating-section" style="margin-top: 8px; display: flex; align-items: center; gap: 5px;">
+									<div class="stars" style="display: flex; gap: 1px;">
+										${starsHTML}
+									</div>
+									<span class="rating-text" style="font-size: 14px; color: #666; font-weight: 500;">
+										${product.rating} (${product.total_reviews} reviews)
+									</span>
+								</div>
+							</div>
+							<div class="block2-txt-child2 flex-r p-t-3">
+								<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2" data-product-id="${product.id}">
+									<img class="icon-heart1 dis-block trans-04" src="/static/images/icons/icon-heart-01.png" alt="ICON">
+									<img class="icon-heart2 dis-block trans-04 ab-t-l" src="/static/images/icons/icon-heart-02.png" alt="ICON">
+								</a>
+							</div>
+						</div>
+						<div class="block2-btn-container" style="text-align: center; margin-top: auto; padding: 15px 10px 15px 10px;">
+							<div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+								<a href="#" class="js-show-modal1" data-product-id="${product.id}" style="background-color: #e83e8c; color: white; border: none; border-radius: 25px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; padding: 12px 20px; font-size: 12px; text-decoration: none; display: inline-block; min-width: 120px; text-align: center;">
+									Quick View
+								</a>
+								<button onclick="handleAddToCart(${product.id})" style="background-color: #28a745; color: white; border: none; border-radius: 25px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; padding: 12px 20px; font-size: 12px; cursor: pointer; display: inline-block; min-width: 120px;">
+									Add to Cart
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			`;
+		});
+		
+		// Replace content and create search result objects
+		productGrid.innerHTML = productsHTML;
+		searchResults = Array.from(productGrid.querySelectorAll('.isotope-item')).map(item => ({
+			element: item,
+			classes: Array.from(item.classList),
+			isVisible: true
+		}));
+		
+		// Update pagination and show first page
+		updatePagination();
+		showPage(1);
+		
+		console.log(`Displayed ${products.length} search results for "${query}"`);
+	}
+	
+	function showSearchLoading() {
+		const productGrid = document.querySelector('.isotope-grid');
+		if (productGrid) {
+			productGrid.innerHTML = `
+				<div class="col-12" style="text-align: center; padding: 60px 20px;">
+					<div style="color: #e83e8c;">
+						<i class="fa fa-spinner fa-spin" style="font-size: 3rem; margin-bottom: 15px;"></i>
+						<h4 style="margin-bottom: 10px;">Searching products...</h4>
+						<p style="margin: 0;">Please wait while we find the best matches for you</p>
+					</div>
+				</div>
+			`;
+		}
+	}
+	
+	function showSearchError(message) {
+		const productGrid = document.querySelector('.isotope-grid');
+		if (productGrid) {
+			productGrid.innerHTML = `
+				<div class="col-12" style="text-align: center; padding: 60px 20px;">
+					<div style="color: #dc3545;">
+						<i class="fa fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 15px;"></i>
+						<h4 style="margin-bottom: 10px;">Search Error</h4>
+						<p style="margin: 0 0 15px 0;">${message}</p>
+						<button onclick="filterProducts('all')" class="btn btn-primary" style="background: #e83e8c; border: none; padding: 10px 20px; border-radius: 5px; color: white;">
+							Show All Products
+						</button>
+					</div>
+				</div>
+			`;
+		}
+	}
+	
+	function showNoResults(query) {
+		const productGrid = document.querySelector('.isotope-grid');
+		if (productGrid) {
+			productGrid.innerHTML = `
+				<div class="col-12" style="text-align: center; padding: 60px 20px;">
+					<div style="color: #666;">
+						<i class="fa fa-search" style="font-size: 3rem; margin-bottom: 15px;"></i>
+						<h4 style="margin-bottom: 10px;">No products found</h4>
+						<p style="margin: 0 0 15px 0;">No products found for "${query}"</p>
+						<button onclick="filterProducts('all')" class="btn btn-primary" style="background: #e83e8c; border: none; padding: 10px 20px; border-radius: 5px; color: white;">
+							Show All Products
+						</button>
+					</div>
+				</div>
+			`;
+		}
+		updatePagination();
+	}
+	</script>
 
 </body>
 </html>
