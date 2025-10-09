@@ -5,6 +5,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.contrib.auth import login
+from django.core.paginator import Paginator
 from Product.models import Product
 import os
 import json
@@ -155,14 +156,19 @@ class ProductView(View): #done
         api_url = config('BASE_URL', default='http://127.0.0.1:8000')
         
         # Fetch all active products with related data
-        products = Product.objects.filter(is_active=True).select_related('category').prefetch_related('images').order_by('-created_at')
+        products_queryset = Product.objects.filter(is_active=True).select_related('category').prefetch_related('images').order_by('-created_at')
+        
+        # Implement pagination - 12 products per page
+        paginator = Paginator(products_queryset, 12)
+        page_number = request.GET.get('page')
+        products = paginator.get_page(page_number)
         
         # Get categories for filtering
         categories = Product.objects.filter(is_active=True).values_list('category__name', flat=True).distinct()
         
         context = {
             'base_url': api_url,
-            'products': products,
+            'products': products,  # This is now a Page object with pagination info
             'categories': categories
         }
         return render(request,'product.html', context)
