@@ -163,6 +163,8 @@ class ProductView(View): #done
         page_number = request.GET.get('page')
         products = paginator.get_page(page_number)
         
+        
+        
         # Get categories for filtering
         categories = Product.objects.filter(is_active=True).values_list('category__name', flat=True).distinct()
         

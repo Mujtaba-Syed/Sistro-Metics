@@ -329,11 +329,18 @@
 				" style="margin-bottom: 30px;">
 					<div class="block2" style="border: 2px solid #e83e8c; border-radius: 8px; padding: 8px; overflow: visible; display: flex; flex-direction: column; min-height: 520px; height: auto; margin-bottom: 30px;">
 						<div class="block2-pic hov-img0" style="overflow: hidden; position: relative; cursor: zoom-in; flex-shrink: 0; height: 200px;">
-							{% if product.images.all %}
-								<img src="{{ base_url }}{{ product.images.first.image }}" alt="{{ product.name }}" onerror="this.src='/static/images/product-01.jpg'" style="transition: transform 0.3s ease; width: 100%; height: 100%; object-fit: cover; transform-origin: center;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
-							{% else %}
-								<img src="/static/images/product-01.jpg" alt="{{ product.name }}" style="transition: transform 0.3s ease; width: 100%; height: 100%; object-fit: cover; transform-origin: center;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
-							{% endif %}
+				
+							{% for image in product.images.all %}
+								{% if image.order == 0 and image.is_active %}
+									{% if image.image.url %}
+										<img src="{{ image.image.url }}" alt="{{ product.name }}" onerror="this.src='/static/images/product-02.jpg'" style="transition: transform 0.3s ease; width: 100%; height: 100%; object-fit: cover; transform-origin: center;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+									{% else %}
+										<img src="{{ base_url }}/media/{{ image.image }}" alt="{{ product.name }}" onerror="this.src='/static/images/product-02.jpg'" style="transition: transform 0.3s ease; width: 100%; height: 100%; object-fit: cover; transform-origin: center;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+									{% endif %}
+								{% endif %}
+							{% empty %}
+								<img src="/static/images/product-03.jpg" alt="{{ product.name }}" style="transition: transform 0.3s ease; width: 100%; height: 100%; object-fit: cover; transform-origin: center;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+							{% endfor %}
 							
 							<!-- Product Labels -->
 							{% if product.is_on_sale %}
@@ -442,7 +449,6 @@
 
 	{% include 'includes/back-to-top.html' %}
 
-	{% include 'includes/quick-view-modal.html' %}
 <!--===============================================================================================-->	
 	<script src="{% static 'vendor/jquery/jquery-3.2.1.min.js' %}"></script>
 <!--===============================================================================================-->
