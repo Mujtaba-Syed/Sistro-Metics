@@ -36,6 +36,8 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'css/util.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
 <!--===============================================================================================-->
+
+<!--===============================================================================================-->
 </head>
 <body class="animsition">
 	
@@ -52,18 +54,18 @@
 	<section class="section-slide">
 		<div class="wrap-slick1">
 			<div class="slick1">
-				<div class="item-slick1" style="background-image: url('{% static 'images/slide-01.jpg' %}');">
+				<div class="item-slick1" style="background-image: url('{% static 'images/pexels-kinkate-208052.jpg' %}');">
 					<div class="container h-full">
 						<div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
 							<div class="layer-slick1 animated visible-false" data-appear="fadeInDown" data-delay="0">
 								<span class="ltext-101 cl2 respon2">
-									Women Collection 2018
+									Beauty Collection 2024
 								</span>
 							</div>
 								
 							<div class="layer-slick1 animated visible-false" data-appear="fadeInUp" data-delay="800">
 								<h2 class="ltext-201 cl2 p-t-19 p-b-43 respon1">
-									NEW SEASON
+									SKINCARE ESSENTIALS
 								</h2>
 							</div>
 								
@@ -76,18 +78,18 @@
 					</div>
 				</div>
 
-				<div class="item-slick1" style="background-image: url('{% static 'images/slide-02.jpg' %}');">
+				<div class="item-slick1" style="background-image: url('{% static 'images/pexels-rethaferguson-3621234.jpg' %}');">
 					<div class="container h-full">
 						<div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
 							<div class="layer-slick1 animated visible-false" data-appear="rollIn" data-delay="0">
 								<span class="ltext-101 cl2 respon2">
-									Men New-Season
+									Makeup Essentials
 								</span>
 							</div>
 								
 							<div class="layer-slick1 animated visible-false" data-appear="lightSpeedIn" data-delay="800">
 								<h2 class="ltext-201 cl2 p-t-19 p-b-43 respon1">
-									Jackets & Coats
+									Lipsticks & Foundations
 								</h2>
 							</div>
 								
@@ -100,12 +102,12 @@
 					</div>
 				</div>
 
-				<div class="item-slick1" style="background-image: url('{% static 'images/slide-03.jpg' %}');">
+				<div class="item-slick1" style="background-image: url('{% static 'images/pexels-suzyhazelwood-3609620.jpg' %}');">
 					<div class="container h-full">
 						<div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
 							<div class="layer-slick1 animated visible-false" data-appear="rotateInDownLeft" data-delay="0">
 								<span class="ltext-101 cl2 respon2">
-									Men Collection 2018
+									Premium Cosmetics
 								</span>
 							</div>
 								
@@ -128,82 +130,114 @@
 	</section>
 
 
-	<!-- Banner -->
+	<!-- New Arrivals-->
 	<div class="sec-banner bg0 p-t-80 p-b-50">
 		<div class="container">
-			<div class="row">
-				<div class="col-md-6 col-xl-4 p-b-30 m-lr-auto">
-					<!-- Block1 -->
-					<div class="block1 wrap-pic-w">
-						<img src="{% static 'images/banner-01.jpg' %}" alt="IMG-BANNER">
-
-						<a href="{% url 'product' %}" class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
-							<div class="block1-txt-child1 flex-col-l">
-								<span class="block1-name ltext-102 trans-04 p-b-8">
-									Women
-								</span>
-
-								<span class="block1-info stext-102 trans-04">
-									Spring 2018
-								</span>
-							</div>
-
-							<div class="block1-txt-child2 p-b-4 trans-05">
-								<div class="block1-link stext-101 cl0 trans-09">
-									Shop Now
+			<div class="p-b-51 text-center">
+				<h3 class="ltext-103 cl2">
+					New Arrivals
+				</h3>
+				<a href="{% url 'product' %}" style="color: #3a0d22; text-decoration: underline; font-weight: 500; display: block; margin-top: 10px; transition: color 0.3s ease;" onmouseover="this.style.color='#e83e8c'" onmouseout="this.style.color='#3a0d22'">
+					shop all →
+				</a>
+			</div>
+			
+			<div class="new-arrivals-slider-container" style="position: relative;">
+				<!-- Left Arrow -->
+				<button class="slider-arrow slider-arrow-left" onclick="scrollNewArrivals('left')" style="position: absolute; left: -43px; top: 50%; transform: translateY(-50%); background: #e83e8c; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; font-size: 18px; font-weight: bold;">
+					‹
+				</button>
+				
+				<!-- Right Arrow -->
+				<button class="slider-arrow slider-arrow-right" onclick="scrollNewArrivals('right')" style="position: absolute; right: -43px; top: 50%; transform: translateY(-50%); background: #e83e8c; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; font-size: 18px; font-weight: bold;">
+					›
+				</button>
+				
+				<div class="new-arrivals-slider" style="overflow: hidden; position: relative;">
+					<div class="new-arrivals-track" style="display: flex; transition: transform 0.3s ease; gap: 20px;">
+						{% for product in new_arrivals %}
+                        <div class="new-arrivals-slide" style="flex: 0 0 calc(25% - 15px); min-width: 250px;">
+							<!-- Block2 -->
+                            <div class="block2" style="border: 2px solid #e83e8c; border-radius: 8px; padding: 8px; overflow: visible; display: flex; flex-direction: column; min-height: 480px; height: auto;">
+								<div class="block2-pic hov-img0" style="overflow: hidden; position: relative; cursor: zoom-in; flex-shrink: 0; height: 200px;">
+									{% if product.images.first %}
+										<img src="{{ base_url }}{{ product.images.first.image.url }}" alt="{{ product.name }}" onerror="this.src='{{ base_url }}/static/images/product-01.jpg'" style="transition: transform 0.3s ease; width: 100%; height: 100%; object-fit: cover; transform-origin: center;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+									{% else %}
+										<img src="{{ base_url }}/static/images/product-01.jpg" alt="{{ product.name }}" style="transition: transform 0.3s ease; width: 100%; height: 100%; object-fit: cover; transform-origin: center;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+									{% endif %}
+									
+									{% if product.is_on_sale %}
+										<span class="block2-label-sale" style="position: absolute; top: 10px; left: 10px; z-index: 100; background: #e83e8c; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">-{{ product.percentage_discount }}%</span>
+									{% endif %}
+									
+									{% if product.is_new %}
+										<span class="block2-label-new" style="position: absolute; top: 10px; right: 10px; z-index: 100; background: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">New</span>
+									{% endif %}
+									
+									{% if product.is_featured %}
+										<span class="block2-label-featured" style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 100; background: #ffc107; color: black; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">Featured</span>
+									{% endif %}
 								</div>
-							</div>
-						</a>
-					</div>
+
+                                <div class="block2-txt flex-w flex-t p-t-14" style="flex-grow: 1; min-height: 160px;">
+									<div class="block2-txt-child1 flex-col-l">
+										<a href="product-detail.html?id={{ product.id }}" class="stext-104 cl5 hov-cl1 trans-04 js-name-b2 p-b-6">
+											{{ product.name }}
+										</a>
+
+										<div class="stext-105 cl3">
+											{% if product.is_on_sale %}
+												<span class="stext-106 cl4" style="text-decoration: line-through;">Rs {{ product.price }}</span>
+												<span class="stext-105 cl3 font-weight-bold font-size-16">Rs {{ product.get_discounted_price }}</span>
+												<div class="stext-107 cl6" style="font-size: 12px; color: #e83e8c; font-weight: bold; margin-top: 2px;">
+													Save Rs {{ product.percentage_discount }}% off
+												</div>
+											{% else %}
+												<span class="stext-105 cl3 font-weight-bold font-size-16">Rs {{ product.price }}</span>
+											{% endif %}
+										</div>
+										
+										<div class="rating-section" style="margin-top: 8px; display: flex; align-items: center; gap: 5px;">
+											<div class="stars" style="display: flex; gap: 1px;">
+												{% for i in "12345" %}
+													{% if forloop.counter <= product.rating %}
+														<span style="color: #ffc107;">★</span>
+													{% else %}
+														<span style="color: #ddd;">★</span>
+													{% endif %}
+												{% endfor %}
+											</div>
+											<span class="rating-text" style="font-size: 14px; color: #666; font-weight: 500;">
+												{{ product.rating }} ({{ product.total_reviews }} reviews)
+											</span>
+										</div>
 				</div>
-
-				<div class="col-md-6 col-xl-4 p-b-30 m-lr-auto">
-					<!-- Block1 -->
-					<div class="block1 wrap-pic-w">
-						<img src="{% static 'images/banner-02.jpg' %}" alt="IMG-BANNER">
-
-						<a href="{% url 'product' %}" class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
-							<div class="block1-txt-child1 flex-col-l">
-								<span class="block1-name ltext-102 trans-04 p-b-8">
-									Men
-								</span>
-
-								<span class="block1-info stext-102 trans-04">
-									Spring 2018
-								</span>
-							</div>
-
-							<div class="block1-txt-child2 p-b-4 trans-05">
-								<div class="block1-link stext-101 cl0 trans-09">
-									Shop Now
+				
+									<div class="block2-txt-child2 flex-r p-t-3">
+										<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2" data-product-id="{{ product.id }}">
+											<img class="icon-heart1 dis-block trans-04" src="{{ base_url }}/static/images/icons/icon-heart-01.png" alt="ICON">
+											<img class="icon-heart2 dis-block trans-04 ab-t-l" src="{{ base_url }}/static/images/icons/icon-heart-02.png" alt="ICON">
+										</a>
+									</div>
+								</div>
+								
+								<div class="block2-btn-container" style="text-align: center; margin-top: auto; padding: 15px 10px 10px 10px;">
+									<div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+										<a href="#" class="js-show-modal1" data-product-id="{{ product.id }}" style="background-color: #e83e8c; color: white; border: none; border-radius: 25px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; padding: 12px 20px; font-size: 12px; text-decoration: none; display: inline-block; min-width: 120px; text-align: center;">
+											Quick View
+										</a>
+										<button onclick="handleAddToCart({{ product.id }})" style="background-color: #28a745; color: white; border: none; border-radius: 25px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; padding: 12px 20px; font-size: 12px; cursor: pointer; display: inline-block; min-width: 120px;">
+											Add to Cart
+										</button>
+									</div>
 								</div>
 							</div>
-						</a>
-					</div>
-				</div>
-
-				<div class="col-md-6 col-xl-4 p-b-30 m-lr-auto">
-					<!-- Block1 -->
-					<div class="block1 wrap-pic-w">
-						<img src="{% static 'images/banner-03.jpg' %}" alt="IMG-BANNER">
-
-						<a href="{% url 'product' %}" class="block1-txt ab-t-l s-full flex-col-l-sb p-lr-38 p-tb-34 trans-03 respon3">
-							<div class="block1-txt-child1 flex-col-l">
-								<span class="block1-name ltext-102 trans-04 p-b-8">
-									Accessories
-								</span>
-
-								<span class="block1-info stext-102 trans-04">
-									New Trend
-								</span>
-							</div>
-
-							<div class="block1-txt-child2 p-b-4 trans-05">
-								<div class="block1-link stext-101 cl0 trans-09">
-									Shop Now
-								</div>
-							</div>
-						</a>
+						</div>
+						{% empty %}
+						<div class="col-12">
+							<p class="text-center">No new arrivals available at the moment.</p>
+						</div>
+						{% endfor %}
 					</div>
 				</div>
 			</div>
@@ -211,48 +245,58 @@
 	</div>
 
 
+	<!-- Product banners -->
+	<div class="sec-banner bg0 ">
+		<div class="containerr">
+			<div class="row">
+				<div class="col-lg-12 col-md-12 col-sm-12 mt-5 mb-5">
+					<!-- Block1 -->
+					<div class="block1 wrap-pic-w">
+						<img src="{% static 'images/home-banner.gif' %}" alt="IMG-BANNER">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<!-- Product -->
 	<section class="bg0 p-t-23 p-b-140">
 		<div class="container">
 			<div class="p-b-10">
-				<h3 class="ltext-103 cl5">
+				<h3 class="ltext-103 cl2 text-center">
 					Product Overview
 				</h3>
 			</div>
 
 			<div class="flex-w flex-sb-m p-b-52">
 				<div class="flex-w flex-l-m filter-tope-group m-tb-10">
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*">
+					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1" data-filter="*" onclick="filterProducts('all')">
 						All Products
 					</button>
 
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".women">
-						Women
+					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".discounted" onclick="filterProducts('discounted')">
+						Discounted Products
 					</button>
 
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".men">
-						Men
+					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".featured" onclick="filterProducts('featured')">
+						Featured Products
 					</button>
 
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".bag">
-						Bag
+					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".new" onclick="filterProducts('new')">
+						New Products
 					</button>
 
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".shoes">
-						Shoes
-					</button>
-
-					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".watches">
-						Watches
+					<button class="stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5" data-filter=".best-selling" onclick="filterProducts('best-selling')">
+						Best Selling Products
 					</button>
 				</div>
 
 				<div class="flex-w flex-c-m m-tb-10">
-					<div class="flex-c-m stext-106 cl6 size-104 bor4 pointer hov-btn3 trans-04 m-r-8 m-tb-4 js-show-filter">
+					<!-- <div class="flex-c-m stext-106 cl6 size-104 bor4 pointer hov-btn3 trans-04 m-r-8 m-tb-4 js-show-filter">
 						<i class="icon-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-filter-list"></i>
 						<i class="icon-close-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"></i>
 						 Filter
-					</div>
+					</div> -->
 
 					<div class="flex-c-m stext-106 cl6 size-105 bor4 pointer hov-btn3 trans-04 m-tb-4 js-show-search">
 						<i class="icon-search cl2 m-r-6 fs-15 trans-04 zmdi zmdi-search"></i>
@@ -264,15 +308,15 @@
 				<!-- Search product -->
 				<div class="dis-none panel-search w-full p-t-10 p-b-15">
 					<div class="bor8 dis-flex p-l-15">
-						<button class="size-113 flex-c-m fs-16 cl2 hov-cl1 trans-04">
+						<button class="size-113 flex-c-m fs-16 cl2 hov-cl1 trans-04" onclick="performSearch()">
 							<i class="zmdi zmdi-search"></i>
 						</button>
 
-						<input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="search-product" placeholder="Search">
+						<input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="search-product" id="search-input" placeholder="Search products..." onkeypress="handleSearchKeyPress(event)">
 					</div>	
 				</div>
 
-				<!-- Filter -->
+				<!-- Filter
 				<div class="dis-none panel-filter w-full p-t-10">
 					<div class="wrap-filter flex-w bg6 w-full p-lr-40 p-t-27 p-lr-15-sm">
 						<div class="filter-col1 p-r-15 p-b-27">
@@ -459,526 +503,103 @@
 							</div>
 						</div>
 					</div>
-				</div>
+				</div> -->
 			</div>
 
-			<div class="row isotope-grid">
-				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
+			<div class="row isotope-grid" style="min-height: 400px; margin-bottom: 60px;">
+				{% for product in all_products %}
+				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item 
+					{% if product.is_on_sale %}discounted{% endif %}
+					{% if product.is_featured %}featured{% endif %}
+					{% if product.is_new %}new{% endif %}
+					{% if product.rating == 5 %}best-selling{% endif %}
+				">
 					<!-- Block2 -->
-					<div class="block2">
-						<div class="block2-pic hov-img0">
-							<img src="{% static 'images/product-01.jpg' %}" alt="IMG-PRODUCT">
-
-							<a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-								Quick View
-							</a>
+                    <div class="block2" style="border: 2px solid #e83e8c; border-radius: 8px; padding: 8px; overflow: visible; display: flex; flex-direction: column; min-height: 480px; height: auto;">
+						<div class="block2-pic hov-img0" style="overflow: hidden; position: relative; cursor: zoom-in; flex-shrink: 0; height: 200px;">
+							{% if product.images.first %}
+								<img src="{{ base_url }}{{ product.images.first.image.url }}" alt="{{ product.name }}" onerror="this.src='{{ base_url }}/static/images/product-01.jpg'" style="transition: transform 0.3s ease; width: 100%; height: 100%; object-fit: cover; transform-origin: center;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+							{% else %}
+								<img src="{{ base_url }}/static/images/product-01.jpg" alt="{{ product.name }}" style="transition: transform 0.3s ease; width: 100%; height: 100%; object-fit: cover; transform-origin: center;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+							{% endif %}
+							
+							{% if product.is_on_sale %}
+								<span class="block2-label-sale" style="position: absolute; top: 10px; left: 10px; z-index: 100; background: #e83e8c; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">-{{ product.percentage_discount }}%</span>
+							{% endif %}
+							
+							{% if product.is_new %}
+								<span class="block2-label-new" style="position: absolute; top: 10px; right: 10px; z-index: 100; background: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">New</span>
+							{% endif %}
+							
+							{% if product.is_featured %}
+								<span class="block2-label-featured" style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 100; background: #ffc107; color: black; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">Featured</span>
+							{% endif %}
 						</div>
 
-						<div class="block2-txt flex-w flex-t p-t-14">
-							<div class="block2-txt-child1 flex-col-l ">
-								<a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-									Esprit Ruffle Shirt
+                        <div class="block2-txt flex-w flex-t p-t-14" style="flex-grow: 1; min-height: 160px;">
+							<div class="block2-txt-child1 flex-col-l">
+								<a href="product-detail.html?id={{ product.id }}" class="stext-104 cl5 hov-cl1 trans-04 js-name-b2 p-b-6">
+									{{ product.name }}
 								</a>
 
-								<span class="stext-105 cl3">
-									$16.64
-								</span>
+								<div class="stext-105 cl3">
+									{% if product.is_on_sale %}
+										<span class="stext-106 cl4" style="text-decoration: line-through;">Rs {{ product.price }}</span>
+										<span class="stext-105 cl3 font-weight-bold font-size-16">Rs {{ product.get_discounted_price }}</span>
+										<div class="stext-107 cl6" style="font-size: 12px; color: #e83e8c; font-weight: bold; margin-top: 2px;">
+											Save Rs {{ product.percentage_discount }}% off
+										</div>
+									{% else %}
+										<span class="stext-105 cl3 font-weight-bold font-size-16">Rs {{ product.price }}</span>
+									{% endif %}
+								</div>
+								
+								<div class="rating-section" style="margin-top: 8px; display: flex; align-items: center; gap: 5px;">
+									<div class="stars" style="display: flex; gap: 1px;">
+										{% for i in "12345" %}
+											{% if forloop.counter <= product.rating %}
+												<span style="color: #ffc107;">★</span>
+											{% else %}
+												<span style="color: #ddd;">★</span>
+											{% endif %}
+										{% endfor %}
+									</div>
+									<span class="rating-text" style="font-size: 14px; color: #666; font-weight: 500;">
+										{{ product.rating }} ({{ product.total_reviews }} reviews)
+									</span>
+								</div>
 							</div>
 
 							<div class="block2-txt-child2 flex-r p-t-3">
-								<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-									<img class="icon-heart1 dis-block trans-04" src="{% static 'images/icons/icon-heart-01.png' %}" alt="ICON">
-									<img class="icon-heart2 dis-block trans-04 ab-t-l" src="{% static 'images/icons/icon-heart-02.png' %}" alt="ICON">
+								<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2" data-product-id="{{ product.id }}">
+									<img class="icon-heart1 dis-block trans-04" src="{{ base_url }}/static/images/icons/icon-heart-01.png" alt="ICON">
+									<img class="icon-heart2 dis-block trans-04 ab-t-l" src="{{ base_url }}/static/images/icons/icon-heart-02.png" alt="ICON">
 								</a>
+							</div>
+						</div>
+						
+						<div class="block2-btn-container" style="text-align: center; margin-top: auto; padding: 15px 10px 10px 10px;">
+							<div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+								<a href="#" class="js-show-modal1" data-product-id="{{ product.id }}" style="background-color: #e83e8c; color: white; border: none; border-radius: 25px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; padding: 12px 20px; font-size: 12px; text-decoration: none; display: inline-block; min-width: 120px; text-align: center;">
+									Quick View
+								</a>
+								<button onclick="handleAddToCart({{ product.id }})" style="background-color: #28a745; color: white; border: none; border-radius: 25px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; padding: 12px 20px; font-size: 12px; cursor: pointer; display: inline-block; min-width: 120px;">
+									Add to Cart
+								</button>
 							</div>
 						</div>
 					</div>
 				</div>
-
-				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
-					<!-- Block2 -->
-					<div class="block2">
-						<div class="block2-pic hov-img0">
-							<img src="{% static 'images/product-02.jpg' %}" alt="IMG-PRODUCT">
-
-							<a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-								Quick View
-							</a>
-						</div>
-
-						<div class="block2-txt flex-w flex-t p-t-14">
-							<div class="block2-txt-child1 flex-col-l ">
-								<a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-									Herschel supply
-								</a>
-
-								<span class="stext-105 cl3">
-									$35.31
-								</span>
-							</div>
-
-							<div class="block2-txt-child2 flex-r p-t-3">
-								<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-									<img class="icon-heart1 dis-block trans-04" src="{% static 'images/icons/icon-heart-01.png' %}" alt="ICON">
-									<img class="icon-heart2 dis-block trans-04 ab-t-l" src="{% static 'images/icons/icon-heart-02.png' %}" alt="ICON">
-								</a>
-							</div>
-						</div>
-					</div>
+				{% empty %}
+				<div class="col-12">
+					<p class="text-center">No products available at the moment.</p>
 				</div>
-
-				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item men">
-					<!-- Block2 -->
-					<div class="block2">
-						<div class="block2-pic hov-img0">
-							<img src="{% static 'images/product-03.jpg' %}" alt="IMG-PRODUCT">
-
-							<a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-								Quick View
-							</a>
-						</div>
-
-						<div class="block2-txt flex-w flex-t p-t-14">
-							<div class="block2-txt-child1 flex-col-l ">
-								<a href="{% url 'product-detail' %}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-									Only Check Trouser
-								</a>
-
-								<span class="stext-105 cl3">
-									$25.50
-								</span>
-							</div>
-
-							<div class="block2-txt-child2 flex-r p-t-3">
-								<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-									<img class="icon-heart1 dis-block trans-04" src="{% static 'images/icons/icon-heart-01.png' %}" alt="ICON">
-									<img class="icon-heart2 dis-block trans-04 ab-t-l" src="{% static 'images/icons/icon-heart-02.png' %}" alt="ICON">
-								</a>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
-					<!-- Block2 -->
-					<div class="block2">
-						<div class="block2-pic hov-img0">
-							<img src="{% static 'images/product-04.jpg' %}" alt="IMG-PRODUCT">
-
-							<a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-								Quick View
-							</a>
-						</div>
-
-						<div class="block2-txt flex-w flex-t p-t-14">
-							<div class="block2-txt-child1 flex-col-l ">
-								<a href="{% url 'product-detail' %}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-									Classic Trench Coat
-								</a>
-
-								<span class="stext-105 cl3">
-									$75.00
-								</span>
-							</div>
-
-							<div class="block2-txt-child2 flex-r p-t-3">
-								<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-									<img class="icon-heart1 dis-block trans-04" src="{% static 'images/icons/icon-heart-01.png' %}" alt="ICON">
-									<img class="icon-heart2 dis-block trans-04 ab-t-l" src="{% static 'images/icons/icon-heart-02.png' %}" alt="ICON">
-								</a>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
-					<!-- Block2 -->
-					<div class="block2">
-						<div class="block2-pic hov-img0">
-							<img src="{% static 'images/product-05.jpg' %}" alt="IMG-PRODUCT">
-
-							<a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-								Quick View
-							</a>
-						</div>
-
-						<div class="block2-txt flex-w flex-t p-t-14">
-							<div class="block2-txt-child1 flex-col-l ">
-								<a href="{% url 'product-detail' %}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-									Front Pocket Jumper
-								</a>
-
-								<span class="stext-105 cl3">
-									$34.75
-								</span>
-							</div>
-
-							<div class="block2-txt-child2 flex-r p-t-3">
-								<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-									<img class="icon-heart1 dis-block trans-04" src="{% static 'images/icons/icon-heart-01.png' %}" alt="ICON">
-									<img class="icon-heart2 dis-block trans-04 ab-t-l" src="{% static 'images/icons/icon-heart-02.png' %}" alt="ICON">
-								</a>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item watches">
-					<!-- Block2 -->
-					<div class="block2">
-						<div class="block2-pic hov-img0">
-							<img src="{% static 'images/product-06.jpg' %}" alt="IMG-PRODUCT">
-
-							<a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-								Quick View
-							</a>
-						</div>
-
-						<div class="block2-txt flex-w flex-t p-t-14">
-							<div class="block2-txt-child1 flex-col-l ">
-											<a href="{% url 'product-detail' %}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-									Vintage Inspired Classic 
-								</a>
-
-								<span class="stext-105 cl3">
-									$93.20
-								</span>
-							</div>
-
-							<div class="block2-txt-child2 flex-r p-t-3">
-								<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-									<img class="icon-heart1 dis-block trans-04" src="{% static 'images/icons/icon-heart-01.png' %}" alt="ICON">
-									<img class="icon-heart2 dis-block trans-04 ab-t-l" src="{% static 'images/icons/icon-heart-02.png' %}" alt="ICON">
-								</a>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
-					<!-- Block2 -->
-					<div class="block2">
-						<div class="block2-pic hov-img0">
-							<img src="{% static 'images/product-07.jpg' %}" alt="IMG-PRODUCT">
-
-							<a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-								Quick View
-							</a>
-						</div>
-
-						<div class="block2-txt flex-w flex-t p-t-14">
-							<div class="block2-txt-child1 flex-col-l ">
-								<a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-									Shirt in Stretch Cotton
-								</a>
-
-								<span class="stext-105 cl3">
-									$52.66
-								</span>
-							</div>
-
-							<div class="block2-txt-child2 flex-r p-t-3">
-								<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-									<img class="icon-heart1 dis-block trans-04" src="{% static 'images/icons/icon-heart-01.png' %}" alt="ICON">
-									<img class="icon-heart2 dis-block trans-04 ab-t-l" src="{% static 'images/icons/icon-heart-02.png' %}" alt="ICON">
-								</a>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
-					<!-- Block2 -->
-					<div class="block2">
-						<div class="block2-pic hov-img0">
-							<img src="{% static 'images/product-08.jpg' %}" alt="IMG-PRODUCT">
-
-							<a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-								Quick View
-							</a>
-						</div>
-
-						<div class="block2-txt flex-w flex-t p-t-14">
-							<div class="block2-txt-child1 flex-col-l ">
-								<a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-									Pieces Metallic Printed
-								</a>
-
-								<span class="stext-105 cl3">
-									$18.96
-								</span>
-							</div>
-
-							<div class="block2-txt-child2 flex-r p-t-3">
-								<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-									<img class="icon-heart1 dis-block trans-04" src="{% static 'images/icons/icon-heart-01.png' %}" alt="ICON">
-									<img class="icon-heart2 dis-block trans-04 ab-t-l" src="{% static 'images/icons/icon-heart-02.png' %}" alt="ICON">
-								</a>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item shoes">
-					<!-- Block2 -->
-					<div class="block2">
-						<div class="block2-pic hov-img0">
-							<img src="{% static 'images/product-09.jpg' %}" alt="IMG-PRODUCT">
-
-							<a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-								Quick View
-							</a>
-						</div>
-
-						<div class="block2-txt flex-w flex-t p-t-14">
-							<div class="block2-txt-child1 flex-col-l ">
-								<a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-									Converse All Star Hi Plimsolls
-								</a>
-
-								<span class="stext-105 cl3">
-									$75.00
-								</span>
-							</div>
-
-							<div class="block2-txt-child2 flex-r p-t-3">
-								<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-									<img class="icon-heart1 dis-block trans-04" src="{% static 'images/icons/icon-heart-01.png' %}" alt="ICON">
-									<img class="icon-heart2 dis-block trans-04 ab-t-l" src="{% static 'images/icons/icon-heart-02.png' %}" alt="ICON">
-								</a>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
-					<!-- Block2 -->
-					<div class="block2">
-						<div class="block2-pic hov-img0">
-							<img src="{% static 'images/product-10.jpg' %}" alt="IMG-PRODUCT">
-
-							<a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-								Quick View
-							</a>
-						</div>
-
-						<div class="block2-txt flex-w flex-t p-t-14">
-							<div class="block2-txt-child1 flex-col-l ">
-								<a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-									Femme T-Shirt In Stripe
-								</a>
-
-								<span class="stext-105 cl3">
-									$25.85
-								</span>
-							</div>
-
-							<div class="block2-txt-child2 flex-r p-t-3">
-								<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-									<img class="icon-heart1 dis-block trans-04" src="{% static 'images/icons/icon-heart-01.png' %}" alt="ICON">
-									<img class="icon-heart2 dis-block trans-04 ab-t-l" src="{% static 'images/icons/icon-heart-02.png' %}" alt="ICON">
-								</a>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item men">
-					<!-- Block2 -->
-					<div class="block2">
-						<div class="block2-pic hov-img0">
-							<img src="{% static 'images/product-11.jpg' %}" alt="IMG-PRODUCT">
-
-							<a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-								Quick View
-							</a>
-						</div>
-
-						<div class="block2-txt flex-w flex-t p-t-14">
-							<div class="block2-txt-child1 flex-col-l ">
-								<a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-									Herschel supply 
-								</a>
-
-								<span class="stext-105 cl3">
-									$63.16
-								</span>
-							</div>
-
-							<div class="block2-txt-child2 flex-r p-t-3">
-								<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-									<img class="icon-heart1 dis-block trans-04" src="{% static 'images/icons/icon-heart-01.png' %}" alt="ICON">
-									<img class="icon-heart2 dis-block trans-04 ab-t-l" src="{% static 'images/icons/icon-heart-02.png' %}" alt="ICON">
-								</a>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item men">
-					<!-- Block2 -->
-					<div class="block2">
-						<div class="block2-pic hov-img0">
-							<img src="{% static 'images/product-12.jpg' %}" alt="IMG-PRODUCT">
-
-							<a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-								Quick View
-							</a>
-						</div>
-
-						<div class="block2-txt flex-w flex-t p-t-14">
-							<div class="block2-txt-child1 flex-col-l ">
-										<a href="{% url 'product-detail' %}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-									Herschel supply
-								</a>
-
-								<span class="stext-105 cl3">
-									$63.15
-								</span>
-							</div>
-
-							<div class="block2-txt-child2 flex-r p-t-3">
-								<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-									<img class="icon-heart1 dis-block trans-04" src="{% static 'images/icons/icon-heart-01.png' %}" alt="ICON">
-									<img class="icon-heart2 dis-block trans-04 ab-t-l" src="{% static 'images/icons/icon-heart-02.png' %}" alt="ICON">
-								</a>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
-					<!-- Block2 -->
-					<div class="block2">
-						<div class="block2-pic hov-img0">
-							<img src="{% static 'images/product-13.jpg' %}" alt="IMG-PRODUCT">
-
-							<a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-								Quick View
-							</a>
-						</div>
-
-						<div class="block2-txt flex-w flex-t p-t-14">
-							<div class="block2-txt-child1 flex-col-l ">
-								<a href="{% url 'product-detail' %}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-									T-Shirt with Sleeve
-								</a>
-
-								<span class="stext-105 cl3">
-									$18.49
-								</span>
-							</div>
-
-							<div class="block2-txt-child2 flex-r p-t-3">
-								<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-									<img class="icon-heart1 dis-block trans-04" src="{% static 'images/icons/icon-heart-01.png' %}" alt="ICON">
-									<img class="icon-heart2 dis-block trans-04 ab-t-l" src="{% static 'images/icons/icon-heart-02.png' %}" alt="ICON">
-								</a>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
-					<!-- Block2 -->
-					<div class="block2">
-						<div class="block2-pic hov-img0">
-							<img src="{% static 'images/product-14.jpg' %}	" alt="IMG-PRODUCT">
-
-							<a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-								Quick View
-							</a>
-						</div>
-
-						<div class="block2-txt flex-w flex-t p-t-14">
-							<div class="block2-txt-child1 flex-col-l ">
-								<a href="{% url 'product-detail' %}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-									Pretty Little Thing
-								</a>
-
-								<span class="stext-105 cl3">
-									$54.79
-								</span>
-							</div>
-
-							<div class="block2-txt-child2 flex-r p-t-3">
-								<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-									<img class="icon-heart1 dis-block trans-04" src="{% static 'images/icons/icon-heart-01.png' %}" alt="ICON">
-									<img class="icon-heart2 dis-block trans-04 ab-t-l" src="{% static 'images/icons/icon-heart-02.png' %}" alt="ICON">
-								</a>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item watches">
-					<!-- Block2 -->
-					<div class="block2">
-						<div class="block2-pic hov-img0">
-							<img src="{% static 'images/product-15.jpg' %}" alt="IMG-PRODUCT">
-
-							<a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-								Quick View
-							</a>
-						</div>
-
-						<div class="block2-txt flex-w flex-t p-t-14">
-							<div class="block2-txt-child1 flex-col-l ">
-								<a href="{% url 'product-detail' %}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-									Mini Silver Mesh Watch
-								</a>
-
-								<span class="stext-105 cl3">
-									$86.85
-								</span>
-							</div>
-
-							<div class="block2-txt-child2 flex-r p-t-3">
-								<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-									<img class="icon-heart1 dis-block trans-04" src="{% static 'images/icons/icon-heart-01.png' %}" alt="ICON">
-									<img class="icon-heart2 dis-block trans-04 ab-t-l" src="{% static 'images/icons/icon-heart-02.png' %}" alt="ICON">
-								</a>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
-					<!-- Block2 -->
-					<div class="block2">
-						<div class="block2-pic hov-img0">
-							<img src="{% static 'images/product-16.jpg' %}" alt="IMG-PRODUCT">
-
-							<a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-								Quick View
-							</a>
-						</div>
-
-						<div class="block2-txt flex-w flex-t p-t-14">
-							<div class="block2-txt-child1 flex-col-l ">
-								<a href="{% url 'product-detail' %}" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
-									Square Neck Back
-								</a>
-
-								<span class="stext-105 cl3">
-									$29.64
-								</span>
-							</div>
-
-							<div class="block2-txt-child2 flex-r p-t-3">
-								<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-									<img class="icon-heart1 dis-block trans-04" src="{% static 'images/icons/icon-heart-01.png' %}" alt="ICON">
-									<img class="icon-heart2 dis-block trans-04 ab-t-l" src="{% static 'images/icons/icon-heart-02.png' %}" alt="ICON">
-								</a>
-							</div>
-						</div>
-					</div>
-				</div>
+				{% endfor %}
 			</div>
 
 			<!-- Load more -->
 			<div class="flex-c-m flex-w w-full p-t-45">
-				<a href="#" class="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04">
+				<a href="{% url 'product' %}" class="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04">
 					Load More
 				</a>
 			</div>
@@ -986,12 +607,63 @@
 	</section>
 
 
+	<!-- Blog section  -->
+	<section class="sec-blog bg0 p-t-60 p-b-90">
+		<div class="container">
+			<div class="p-b-51 text-center">
+				<h3 class="ltext-103 cl2">
+					Latest Blog Posts
+				</h3>
+				<a href="{% url 'blog' %}" style="color: #3a0d22; text-decoration: underline; font-weight: 500; display: block; margin-top: 10px; transition: color 0.3s ease;" onmouseover="this.style.color='#e83e8c'" onmouseout="this.style.color='#3a0d22'">
+					view all posts →
+				</a>
+			</div>
+
+			<div class="row blog-posts-container">
+				<!-- Dynamic blog cards will be inserted here -->
+			</div>
+			
+			<!-- Loading message -->
+			<div class="blog-loading-message text-center py-5" style="display: none;">
+				<div class="spinner-border text-primary" role="status">
+					<span class="visually-hidden">Loading...</span>
+				</div>
+				<p class="mt-3 text-muted">Loading blog posts...</p>
+			</div>
+			
+			<!-- Error message -->
+			<div class="blog-error-message text-center py-5" style="display: none;">
+				<div class="alert alert-warning" role="alert">
+					<p class="mb-0">Failed to load blog posts. Please try again later.</p>
+				</div>
+			</div>
+
+				<!-- Loading/Error Message -->
+				<div class="col-12 blog-loading-message" style="display: none;">
+					<div class="text-center">
+						<div class="spinner-border text-primary" role="status">
+							<span class="visually-hidden">Loading...</span>
+						</div>
+						<p class="mt-2">Loading blog posts...</p>
+					</div>
+				</div>
+
+				<div class="col-12 blog-error-message" style="display: none;">
+					<div class="alert alert-danger text-center">
+						<p>Failed to load blog posts. Please try again later.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
 {% include 'includes/footer.html' %}
 
 
 {% include 'includes/back-to-top.html' %}
 
 {% include 'includes/quick-view-modal.html' %}
+{% include 'includes/login-view-modal.html' %}
 
 <!--===============================================================================================-->	
 	<script src="{% static 'vendor/jquery/jquery-3.2.1.min.js' %}"></script>
@@ -1092,8 +764,366 @@
 			})
 		});
 	</script>
-<!--===============================================================================================-->
+	<script>
+		// Pass API URL and CSRF token from Django to JavaScript
+		window.BASE_URL = '{{ base_url }}';
+		window.CSRF_TOKEN = '{{ csrf_token }}';
+		
+		// New Arrivals Slider functionality
+		let currentSlide = 0;
+		const slidesToShow = 4;
+		
+		function scrollNewArrivals(direction) {
+			const track = document.querySelector('.new-arrivals-track');
+			const slides = document.querySelectorAll('.new-arrivals-slide');
+			const totalSlides = slides.length;
+			
+			if (!track || totalSlides === 0) return;
+			
+			const slideWidth = slides[0].offsetWidth + 20; // width + gap
+			const maxSlides = Math.max(0, totalSlides - slidesToShow);
+			
+			if (direction === 'left') {
+				currentSlide = Math.max(0, currentSlide - 1);
+			} else if (direction === 'right') {
+				currentSlide = Math.min(maxSlides, currentSlide + 1);
+			}
+			
+			const translateX = -currentSlide * slideWidth;
+			track.style.transform = `translateX(${translateX}px)`;
+			
+			// Update arrow visibility
+			const leftArrow = document.querySelector('.slider-arrow-left');
+			const rightArrow = document.querySelector('.slider-arrow-right');
+			
+			if (leftArrow) {
+				leftArrow.style.opacity = currentSlide === 0 ? '0.5' : '1';
+				leftArrow.style.pointerEvents = currentSlide === 0 ? 'none' : 'auto';
+			}
+			
+			if (rightArrow) {
+				rightArrow.style.opacity = currentSlide >= maxSlides ? '0.5' : '1';
+				rightArrow.style.pointerEvents = currentSlide >= maxSlides ? 'none' : 'auto';
+			}
+		}
+		
+		// Initialize slider on page load
+		document.addEventListener('DOMContentLoaded', function() {
+			scrollNewArrivals('left'); // Initialize arrows
+		});
+		
+		// Function to handle Add to Cart click
+		function handleAddToCart(productId) {
+			console.log('Add to cart clicked for product:', productId);
+			
+			// Check if user is authenticated
+			if (isAuthenticated()) {
+				// User is logged in, proceed with adding to cart
+				if (typeof addToCart === 'function') {
+					addToCart(productId);
+				} else {
+					console.error('addToCart function not available');
+					showNotification('Error: Add to cart function not available', 'error');
+				}
+			} else {
+				// User is not logged in, show login modal
+				openLoginModal();
+			}
+		}
+	</script>
 	<script src="{% static 'js/main.js' %}"></script>
+	<script src="{% static 'js/cart.js' %}"></script>
+	<script src="{% static 'js/index.js' %}"></script>
+	
+	<script>
+	// Store original products HTML
+	let originalProductsHTML = '';
+	
+	// Initialize original products on page load
+	document.addEventListener('DOMContentLoaded', function() {
+		const productGrid = document.querySelector('.isotope-grid');
+		if (productGrid) {
+			originalProductsHTML = productGrid.innerHTML;
+			console.log('Original products stored');
+		}
+	});
+	
+	// Function to restore original products
+	function restoreOriginalProducts() {
+		const productGrid = document.querySelector('.isotope-grid');
+		if (productGrid && originalProductsHTML) {
+			productGrid.innerHTML = originalProductsHTML;
+			console.log('Original products restored');
+		}
+	}
+	
+	// Simple product filtering function
+	function filterProducts(filterType) {
+		console.log('Filtering products by:', filterType);
+		
+		// Always restore original products first
+		restoreOriginalProducts();
+		
+		// Get all product items
+		const products = document.querySelectorAll('.isotope-item');
+		const productGrid = document.querySelector('.isotope-grid');
+		
+		// Update active button
+		document.querySelectorAll('.filter-tope-group button').forEach(btn => {
+			btn.classList.remove('how-active1');
+		});
+		event.target.classList.add('how-active1');
+		
+		let visibleCount = 0;
+		
+		// Show/hide products based on filter
+		products.forEach(product => {
+			if (filterType === 'all') {
+				product.style.display = 'block';
+				visibleCount++;
+			} else {
+				if (product.classList.contains(filterType)) {
+					product.style.display = 'block';
+					visibleCount++;
+				} else {
+					product.style.display = 'none';
+				}
+			}
+		});
+		
+		// Adjust grid container height and spacing based on visible products
+		if (productGrid) {
+			if (visibleCount === 0) {
+				// No products visible - show message and maintain spacing
+				productGrid.innerHTML = `
+					<div class="col-12" style="text-align: center; padding: 60px 20px; min-height: 300px; display: flex; align-items: center; justify-content: center;">
+						<div>
+							<i class="fa fa-search" style="font-size: 3rem; color: #e83e8c; margin-bottom: 15px;"></i>
+							<h4 style="color: #666; margin-bottom: 10px;">No products found</h4>
+							<p style="color: #999;">Try adjusting your filter criteria</p>
+						</div>
+					</div>
+				`;
+				productGrid.style.minHeight = '300px';
+				productGrid.style.marginBottom = '60px';
+			} else {
+				// Products visible - ensure proper spacing
+				productGrid.style.minHeight = '400px';
+				productGrid.style.marginBottom = '60px';
+			}
+		}
+		
+		console.log('Filter applied:', filterType, 'Visible products:', visibleCount);
+	}
+	
+	// Search functionality
+	let searchTimeout;
+	
+	function handleSearchKeyPress(event) {
+		if (event.key === 'Enter') {
+			event.preventDefault();
+			performSearch();
+		} else {
+			// Debounce search - search after user stops typing for 500ms
+			clearTimeout(searchTimeout);
+			searchTimeout = setTimeout(() => {
+				performSearch();
+			}, 500);
+		}
+	}
+	
+	async function performSearch() {
+		const searchInput = document.getElementById('search-input');
+		const query = searchInput.value.trim();
+		
+		console.log('Searching for:', query);
+		
+		if (!query) {
+			// If search is empty, restore original products
+			restoreOriginalProducts();
+			return;
+		}
+		
+		try {
+			// Show loading state
+			showSearchLoading();
+			
+			// Make API call to search endpoint
+			const response = await fetch(`http://127.0.0.1:8000/product/search/?q=${encodeURIComponent(query)}`);
+			
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+			
+			const data = await response.json();
+			console.log('Search results:', data);
+			
+			// Handle both paginated and non-paginated responses
+			const products = data.results || data.data || [];
+			console.log('Products to display:', products);
+			
+			// Display search results
+			displaySearchResults(products, query);
+			
+		} catch (error) {
+			console.error('Search error:', error);
+			showSearchError('Failed to search products');
+		}
+	}
+	
+	function showSearchLoading() {
+		const productGrid = document.querySelector('.isotope-grid');
+		if (productGrid) {
+			productGrid.innerHTML = `
+				<div class="col-12" style="text-align: center; padding: 60px 20px; min-height: 300px; display: flex; align-items: center; justify-content: center;">
+					<div style="color: #e83e8c;">
+						<i class="fa fa-spinner fa-spin" style="font-size: 3rem; margin-bottom: 15px;"></i>
+						<h4 style="margin-bottom: 10px;">Searching products...</h4>
+						<p style="margin: 0;">Please wait while we find the best matches for you</p>
+					</div>
+				</div>
+			`;
+			productGrid.style.minHeight = '300px';
+			productGrid.style.marginBottom = '60px';
+		}
+	}
+	
+	function showSearchError(message) {
+		const productGrid = document.querySelector('.isotope-grid');
+		if (productGrid) {
+			productGrid.innerHTML = `
+				<div class="col-12" style="text-align: center; padding: 60px 20px; min-height: 300px; display: flex; align-items: center; justify-content: center;">
+					<div style="color: #dc3545;">
+						<i class="fa fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 15px;"></i>
+						<h4 style="margin-bottom: 10px;">Search Error</h4>
+						<p style="margin: 0 0 15px 0;">${message}</p>
+						<button onclick="filterProducts('all')" class="btn btn-primary" style="background: #e83e8c; border: none; padding: 10px 20px; border-radius: 5px; color: white;">
+							Show All Products
+						</button>
+					</div>
+				</div>
+			`;
+			productGrid.style.minHeight = '300px';
+			productGrid.style.marginBottom = '60px';
+		}
+	}
+	
+	function displaySearchResults(products, query) {
+		console.log('displaySearchResults called with:', products.length, 'products');
+		console.log('Products array:', products);
+		
+		const productGrid = document.querySelector('.isotope-grid');
+		if (!productGrid) {
+			console.error('Product grid not found');
+			return;
+		}
+		
+		console.log('Product grid found:', productGrid);
+		
+		if (products.length === 0) {
+			productGrid.innerHTML = `
+				<div class="col-12" style="text-align: center; padding: 60px 20px; min-height: 300px; display: flex; align-items: center; justify-content: center;">
+					<div style="color: #666;">
+						<i class="fa fa-search" style="font-size: 3rem; margin-bottom: 15px;"></i>
+						<h4 style="margin-bottom: 10px;">No products found</h4>
+						<p style="margin: 0 0 15px 0;">No products found for "${query}"</p>
+						<button onclick="filterProducts('all')" class="btn btn-primary" style="background: #e83e8c; border: none; padding: 10px 20px; border-radius: 5px; color: white;">
+							Show All Products
+						</button>
+					</div>
+				</div>
+			`;
+			productGrid.style.minHeight = '300px';
+			productGrid.style.marginBottom = '60px';
+			return;
+		}
+		
+		// Generate HTML for search results
+		let productsHTML = '';
+		products.forEach(product => {
+			const productImage = product.images && product.images.length > 0 
+				? `http://127.0.0.1:8000${product.images[0].image}` 
+				: '/static/images/product-01.jpg';
+			
+			const discountedPrice = product.discounted_price || product.price;
+			const originalPrice = product.is_on_sale ? product.price : null;
+			
+			let priceHTML = '';
+			if (originalPrice && product.is_on_sale) {
+				priceHTML = `
+					<span style="text-decoration: line-through; color: #999; margin-right: 10px;">Rs ${originalPrice}</span>
+					<span style="color: #e83e8c; font-weight: bold;">Rs ${discountedPrice}</span>
+				`;
+			} else {
+				priceHTML = `<span style="color: #333; font-weight: bold;">Rs ${discountedPrice}</span>`;
+			}
+			
+			let badgesHTML = '';
+			if (product.is_on_sale) {
+				badgesHTML += `<span class="block2-label-sale" style="position: absolute; top: 10px; left: 10px; z-index: 100; background: #e83e8c; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">-${product.percentage_discount}%</span>`;
+			}
+			if (product.is_new) {
+				badgesHTML += `<span class="block2-label-new" style="position: absolute; top: 10px; right: 10px; z-index: 100; background: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">New</span>`;
+			}
+			if (product.is_featured) {
+				badgesHTML += `<span class="block2-label-featured" style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 100; background: #ffc107; color: black; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">Featured</span>`;
+			}
+			
+			productsHTML += `
+				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item">
+					<div class="block2" style="border: 2px solid #e83e8c; border-radius: 8px; padding: 8px; overflow: visible; display: flex; flex-direction: column; min-height: 480px; height: auto;">
+						<div class="block2-pic hov-img0" style="overflow: hidden; position: relative; cursor: zoom-in; flex-shrink: 0; height: 200px;">
+							<img src="${productImage}" alt="${product.name}" onerror="this.src='/static/images/product-01.jpg'" style="transition: transform 0.3s ease; width: 100%; height: 100%; object-fit: cover; transform-origin: center;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+							${badgesHTML}
+							<a href="#" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1" data-product-id="${product.id}">
+								Quick View
+							</a>
+						</div>
+						<div class="block2-txt flex-w flex-t p-t-14" style="flex-grow: 1; min-height: 160px;">
+							<div class="block2-txt-child1 flex-col-l">
+								<a href="product-detail.html?id=${product.id}" class="stext-104 cl5 hov-cl1 trans-04 js-name-b2 p-b-6" data-name="${product.name}">
+									${product.name}
+								</a>
+								<span class="stext-105 cl3">
+									${priceHTML}
+								</span>
+								<div class="stext-105 cl3" style="margin-top: 5px;">
+									<span style="color: #ffc107;">★★★★★</span>
+									<span style="font-size: 12px; color: #666; margin-left: 5px;">
+										${product.rating} (${product.total_reviews})
+									</span>
+								</div>
+							</div>
+							<div class="block2-txt-child2 flex-r p-t-3">
+								<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2" data-product-id="${product.id}">
+									<img class="icon-heart1 dis-block trans-04" src="/static/images/icons/icon-heart-01.png" alt="ICON">
+									<img class="icon-heart2 dis-block trans-04 ab-t-l" src="/static/images/icons/icon-heart-02.png" alt="ICON">
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			`;
+		});
+		
+		productGrid.innerHTML = productsHTML;
+		
+		// Ensure proper spacing for search results
+		productGrid.style.minHeight = '400px';
+		productGrid.style.marginBottom = '60px';
+		
+		console.log('Generated HTML length:', productsHTML.length);
+		console.log('First 500 chars of HTML:', productsHTML.substring(0, 500));
+		
+		// Update filter buttons to show search is active
+		document.querySelectorAll('.filter-tope-group button').forEach(btn => {
+			btn.classList.remove('how-active1');
+		});
+		
+		console.log(`Displayed ${products.length} search results for "${query}"`);
+	}
+	</script>
+	<script src="{% static 'js/index-blog.js' %}"></script>
 
 </body>
 </html>

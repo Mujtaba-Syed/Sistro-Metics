@@ -1,0 +1,452 @@
+{
+	"info": {
+		"_postman_id": "4fa87e6c-fa4c-4b88-b089-1b085ce9b78d",
+		"name": "Sistomatic",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "42772023"
+	},
+	"item": [
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Get all products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/product/products/",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"product",
+								"products",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Detail of a product",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/product/products/1",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"product",
+								"products",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cart",
+			"item": [
+				{
+					"name": "Add to cart",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": " {\r\n      \"product_id\": 1,\r\n      \"quantity\": 1\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}/cart/add_item/",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"cart",
+								"add_item",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get cart",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/cart/get_items/",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"cart",
+								"get_items",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "remove a item",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": " {\r\n      \"product_id\": 1,\r\n      \"quantity\": 1\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}/cart/remove_item/",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"cart",
+								"remove_item",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add a item",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": " {\r\n      \"product_id\": 1,\r\n      \"quantity\": 1\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}/cart/increase_item/",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"cart",
+								"increase_item",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Clear the cart",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/cart/clear_cart/",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"cart",
+								"clear_cart",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": " {\r\n      \"username\": \"admin\",\r\n      \"password\": \"admin\"\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}/user-auth/api/auth/login/",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"user-auth",
+								"api",
+								"auth",
+								"login",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Blog",
+			"item": [
+				{
+					"name": "Comments",
+					"item": []
+				},
+				{
+					"name": "Get all blogs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/blog/posts",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"blog",
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get single blog",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/blog/posts/1/",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"blog",
+								"posts",
+								"1",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Like blog",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU4OTE4ODA5LCJpYXQiOjE3NTg5MTUyMDksImp0aSI6IjE1YWY4YTUyZTk2ZDQ1ODA5ODAwYTNhNjY4ZmI5MTdmIiwidXNlcl9pZCI6MX0.2eVGkrVzSOiDVjuEfhJggGjHHI27wZZbUDnBuQW8vpk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/blog/posts/1/like/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"blog",
+								"posts",
+								"1",
+								"like",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Unlike a post",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU4OTE4ODA5LCJpYXQiOjE3NTg5MTUyMDksImp0aSI6IjE1YWY4YTUyZTk2ZDQ1ODA5ODAwYTNhNjY4ZmI5MTdmIiwidXNlcl9pZCI6MX0.2eVGkrVzSOiDVjuEfhJggGjHHI27wZZbUDnBuQW8vpk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/blog/posts/1/unlike/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"blog",
+								"posts",
+								"1",
+								"unlike",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search blog",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/blog/search/?category=Makeup Tips&tags=python",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"blog",
+								"search",
+								""
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "Makeup Tips"
+								},
+								{
+									"key": "tags",
+									"value": "python"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get post by category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/blog/category/Makeup Tips",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"blog",
+								"category",
+								"Makeup Tips"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GEt all comments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/blog/comments/?blog=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"blog",
+								"comments",
+								""
+							],
+							"query": [
+								{
+									"key": "blog",
+									"value": "1"
+								},
+								{
+									"key": "user",
+									"value": "1",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add comment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU4OTE4ODA5LCJpYXQiOjE3NTg5MTUyMDksImp0aSI6IjE1YWY4YTUyZTk2ZDQ1ODA5ODAwYTNhNjY4ZmI5MTdmIiwidXNlcl9pZCI6MX0.2eVGkrVzSOiDVjuEfhJggGjHHI27wZZbUDnBuQW8vpk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"blog\": 1,\r\n    \"user\": 1,\r\n    \"comment\": \"This is a great blog post!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/blog/comments/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"blog",
+								"comments",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
