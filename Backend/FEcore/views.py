@@ -18,6 +18,8 @@ class HomeView(View): #done
     def get(self,request):
         # Get API URL from environment or use default
         api_url = config('BASE_URL', default='http://127.0.0.1:8000')
+        # Remove trailing slash to avoid double slashes
+        api_url = api_url.rstrip('/')
         
         # Fetch new arrival products
         new_arrivals = Product.objects.filter(is_active=True, is_new=True).select_related('category').prefetch_related('images').order_by('-created_at')[:8]
@@ -44,6 +46,8 @@ class BlogView(View): #done
     def get(self,request):
         # Get API URL from environment or use default
         api_url = config('BASE_URL', default='http://127.0.0.1:8000')
+        # Remove trailing slash to avoid double slashes
+        api_url = api_url.rstrip('/')
         
         context = {
             'base_url': api_url,
@@ -143,6 +147,8 @@ class CartView(View): #done
     def get(self,request):
         # Get API URL from environment or use default
         api_url = config('BASE_URL', default='http://127.0.0.1:8000')
+        # Remove trailing slash to avoid double slashes
+        api_url = api_url.rstrip('/')
         
         context = {
             'base_url': api_url,
@@ -154,6 +160,8 @@ class ProductView(View): #done
     def get(self,request):
         # Get API URL from environment or use default
         api_url = config('BASE_URL', default='http://127.0.0.1:8000')
+        # Remove trailing slash to avoid double slashes
+        api_url = api_url.rstrip('/')
         
         # Fetch all active products with related data
         products_queryset = Product.objects.filter(is_active=True).select_related('category').prefetch_related('images').order_by('-created_at')
