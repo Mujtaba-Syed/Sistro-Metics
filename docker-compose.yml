@@ -1,0 +1,23 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sistomatic_app
+    env_file:
+      - .env
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT:-development}
+    volumes:
+      - ./Backend:/app/Backend
+      - ./media:/app/media
+      - ./static:/app/static
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    networks:
+      - sistomatic_network
+
+networks:
+  sistomatic_network:
+    driver: bridge
