@@ -227,7 +227,7 @@ function createCartItemRow(item, index) {
     row.innerHTML = `
         <td class="column-1">
             <div class="how-itemcart1">
-                <img src="${imageUrl}" alt="${productName}" onerror="console.log('Image failed to load:', this.src); this.src='${API_BASE_URL}/static/images/product-01.jpg'">
+                <img src="${imageUrl}" alt="${productName}" onerror="console.log('Image failed to load:', this.src); this.src='/static/images/product-01.jpg'">
             </div>
         </td>
         <td class="column-2">${productName}</td>
@@ -810,7 +810,7 @@ function createCartModalItem(item) {
 
     li.innerHTML = `
         <div class="header-cart-item-img">
-            <img src="${imageUrl}" alt="${productName}" onerror="console.log('Modal image failed to load:', this.src); this.src='${API_BASE_URL}/static/images/product-01.jpg'">
+            <img src="${imageUrl}" alt="${productName}" onerror="console.log('Modal image failed to load:', this.src); this.src='/static/images/product-01.jpg'">
         </div>
 
         <div class="header-cart-item-txt p-t-8">
