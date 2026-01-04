@@ -700,7 +700,8 @@
 			showSearchLoading();
 			
 			// Make API call
-			const response = await fetch(`http://127.0.0.1:8000/product/search/?q=${encodeURIComponent(query)}&page_size=12`);
+			const apiUrl = window.BASE_URL || window.API_BASE_URL || 'http://127.0.0.1:8000';
+			const response = await fetch(`${apiUrl}/product/search/?q=${encodeURIComponent(query)}&page_size=12`);
 			
 			if (!response.ok) {
 				throw new Error(`HTTP error! status: ${response.status}`);

@@ -949,7 +949,8 @@
 			showSearchLoading();
 			
 			// Make API call to search endpoint
-			const response = await fetch(`http://127.0.0.1:8000/product/search/?q=${encodeURIComponent(query)}`);
+			const apiUrl = window.BASE_URL || window.API_BASE_URL || 'http://127.0.0.1:8000';
+			const response = await fetch(`${apiUrl}/product/search/?q=${encodeURIComponent(query)}`);
 			
 			if (!response.ok) {
 				throw new Error(`HTTP error! status: ${response.status}`);
@@ -1042,7 +1043,7 @@
 		let productsHTML = '';
 		products.forEach(product => {
 			const productImage = product.images && product.images.length > 0 
-				? `http://127.0.0.1:8000${product.images[0].image}` 
+				? `${window.BASE_URL || window.API_BASE_URL || ''}${product.images[0].image}` 
 				: '/static/images/product-01.jpg';
 			
 			const discountedPrice = product.discounted_price || product.price;
