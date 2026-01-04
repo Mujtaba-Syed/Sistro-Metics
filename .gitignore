@@ -14,6 +14,7 @@ db.sqlite3
 
 
 # Mac / Windows system files
+temp_auto_push.bat
 .DS_Store
 Thumbs.db
 
@@ -29,4 +30,5 @@ Thumbs.db
 # env files
 .env
 .env.local
-.env.production
+.env.production.gitignore
+temp_interactive_push.bat
